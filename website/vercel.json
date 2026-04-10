@@ -8,6 +8,8 @@
     { "source": "/pricing", "destination": "/pricing.html" },
     { "source": "/checkout", "destination": "/checkout.html" },
     { "source": "/cancel", "destination": "/cancel.html" },
+    { "source": "/vsl", "destination": "/vsl.html" },
+    { "source": "/vsl-sales-page", "destination": "/vsl-sales-page.html" },
     { "source": "/terms", "destination": "/terms.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/start", "destination": "/start.html" },
