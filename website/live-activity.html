@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlphaCMO Live — Watch Your AI Video Engine Work in Real Time</title>
+    <meta name="description" content="Watch AlphaCMO discover viral trends, generate avatar videos, and publish to Instagram — live.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg:#000;--bg2:#0a0a0a;--bg3:#0d0d0d;
+            --t1:#fff;--t2:#b0b0b0;--t3:#777;
+            --green:#00ff88;--green-d:rgba(0,255,136,.12);--green-g:rgba(0,255,136,.25);
+            --orange:#ff8a00;--orange-d:rgba(255,138,0,.12);--orange-b:rgba(255,138,0,.3);
+            --purple:#8a8aff;--purple-d:rgba(138,138,255,.15);
+            --border:#1a1a1a;--f:'Inter',sans-serif;--fc:'Fira Code',monospace;
+        }
+        html{font-size:13px;-webkit-font-smoothing:antialiased}
+        body{background:var(--bg);color:var(--t1);font-family:var(--f);min-height:100vh;overflow-x:hidden}
+        body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+
+        /* Terminal */
+        .term{position:relative;z-index:2;background:var(--bg2);border-bottom:1px solid var(--border);padding:6px 20px;font-family:var(--fc);font-size:12px;color:var(--t3);line-height:1.35;overflow:hidden;max-height:72px}
+        .term .ln{white-space:nowrap}.term .ln::before{content:'>';margin-right:10px;opacity:.5}.term .ln.on{color:var(--green)}
+
+        /* Header */
+        .hdr{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border)}
+        .hdr-l{display:flex;align-items:center;gap:12px}
+        .hdr h1{font-size:20px;font-weight:800;letter-spacing:-.5px}
+        .badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border:1px solid var(--border);border-radius:100px;font-size:10px;font-weight:600;letter-spacing:.5px;color:var(--t2)}
+        .badge .dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:p 2s ease-in-out infinite;box-shadow:0 0 6px var(--green-g)}
+        @keyframes p{0%,100%{opacity:1}50%{opacity:.4}}
+        .hdr-r a{font-size:12px;font-weight:600;color:var(--bg);background:var(--t1);padding:7px 18px;border-radius:6px;text-decoration:none;transition:opacity .2s}
+        .hdr-r a:hover{opacity:.85}
+
+        /* Dashboard */
+        .dash{position:relative;z-index:1;display:grid;grid-template-columns:280px 1fr 300px;gap:1px;background:var(--border);min-height:calc(100vh - 120px)}
+        .col{background:var(--bg);padding:16px;display:flex;flex-direction:column;gap:16px;overflow-y:auto}
+
+        /* Panel headers */
+        .ph{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+        .pt{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+        .pc{font-size:10px;color:var(--t3)}
+
+        /* === COL 1: Agent Status === */
+        .agent-block{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+        .ghost-img{width:160px;height:160px;border-radius:12px;object-fit:cover;border:1px solid var(--border);opacity:0;transition:opacity .6s ease;margin:0 auto 12px}
+        .ghost-img.loaded{opacity:1}
+        .ghost-name{font-size:15px;font-weight:800;color:var(--green);margin-bottom:4px;letter-spacing:-.3px}
+        .ghost-msg{font-size:10px;color:var(--t3);line-height:1.5}
+
+        /* Stats grid */
+        .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+        .stat{padding:12px 8px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);text-align:center}
+        .stat-n{font-size:22px;font-weight:800}
+        .stat-l{font-size:9px;color:var(--t3);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+
+        /* Client roster */
+        .client-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+        .client-row:last-child{border-bottom:none}
+        .client-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+        .client-dot.active{background:var(--green);box-shadow:0 0 6px var(--green-g)}
+        .client-dot.idle{background:var(--t3)}
+        .client-name{font-size:11px;font-weight:600;flex:1}
+        .client-stat{font-size:9px;color:var(--t3)}
+
+        /* Niche tags */
+        .niche-tags{display:flex;flex-wrap:wrap;gap:6px}
+        .niche-tag{font-size:10px;padding:3px 10px;border-radius:100px;background:var(--green-d);color:var(--green);font-weight:500;border:1px solid rgba(0,255,136,.1)}
+
+        /* === COL 2: Pipeline === */
+        .tc{background:var(--bg3);border:1px solid var(--orange-b);border-radius:8px;padding:10px 12px;margin-bottom:6px}
+        .tc-t{font-size:12px;font-weight:600;margin-bottom:4px;line-height:1.4}
+        .tc-g{font-size:10px;color:var(--t3);margin-bottom:6px}
+        .tc-m{display:flex;align-items:center;gap:6px}
+        .tb{font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;letter-spacing:.3px}
+        .tb.s{background:var(--green-d);color:var(--green)}
+        .tb.c{background:var(--orange-d);color:var(--orange)}
+        .tb.r{background:var(--purple-d);color:var(--purple)}
+        .tt{font-size:10px;color:var(--t3);font-family:var(--fc)}
+        .more{font-size:10px;color:var(--green);margin-top:6px;cursor:pointer}
+
+        /* Video grid — 4 wide */
+        .vg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+        .vc{min-width:0}
+        .vt{width:100%;aspect-ratio:9/16;border-radius:6px;overflow:hidden;border:1px solid var(--border);position:relative;cursor:pointer;transition:border-color .2s}
+        .vt:hover{border-color:var(--green)}
+        .vt .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);opacity:0;transition:opacity .2s;font-size:18px;color:#fff}
+        .vt:hover .play{opacity:1}
+        .vg-id{font-size:9px;font-weight:600;color:var(--t2);margin-top:3px}
+        .vg-st{display:inline-block;font-size:8px;font-weight:600;padding:1px 5px;border-radius:3px;margin-top:2px}
+        .vg-st.pub{background:var(--green-d);color:var(--green)}
+        .vg-st.ren{background:var(--orange-d);color:var(--orange)}
+        .vg-st.rev{background:var(--purple-d);color:var(--purple)}
+
+        /* Script preview */
+        .sp{font-family:var(--fc);font-size:10px;color:var(--t2);line-height:1.7;padding:10px;background:var(--bg3);border-radius:6px;border:1px solid var(--border)}
+        .sp .hook{color:var(--green)}.sp .body{color:var(--orange)}.sp .cta{color:var(--purple)}
+
+        /* === COL 3: CTA + Feed + Chat === */
+        .cta-card{background:linear-gradient(135deg,rgba(0,255,136,.06),rgba(0,255,136,.02));border:1px solid rgba(0,255,136,.2);border-radius:10px;padding:20px 16px;text-align:center}
+        .cta-card h3{font-size:14px;font-weight:800;margin-bottom:4px;letter-spacing:-.3px}
+        .cta-card .price-line{font-size:20px;font-weight:900;color:var(--green);margin-bottom:2px}
+        .cta-card .price-compare{font-size:10px;color:var(--t3);margin-bottom:14px;line-height:1.5}
+        .cta-card .price-compare s{opacity:.6}
+        .cta-btn{display:block;width:100%;padding:12px;font-family:var(--f);font-size:13px;font-weight:700;color:#000;background:var(--green);border:none;border-radius:8px;cursor:pointer;transition:all .2s;text-decoration:none;text-align:center}
+        .cta-btn:hover{background:#00e67a;box-shadow:0 0 24px var(--green-g)}
+        .cta-card .spots{font-size:10px;color:var(--t3);margin-top:8px}
+
+        /* Activity feed */
+        .feed-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+        .feed-item:last-child{border-bottom:none}
+        .feed-avi{width:28px;height:28px;border-radius:6px;background:var(--green-d);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;color:var(--green);font-weight:700}
+        .feed-body{flex:1;min-width:0}
+        .feed-msg{font-size:11px;color:var(--t2);line-height:1.5}
+        .feed-msg strong{color:var(--t1);font-weight:600}
+        .feed-msg .code{color:var(--orange);font-family:var(--fc);font-weight:600}
+        .feed-time{font-size:9px;color:var(--t3);margin-top:2px}
+
+        /* Instagram feed */
+        .ig{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+        .ig:last-child{border-bottom:none}
+        .ig-t{font-size:11px;color:var(--t2);line-height:1.5}
+        .ig-m{display:flex;justify-content:space-between;margin-top:4px}
+        .ig-c{font-size:10px;color:var(--green);font-weight:500}
+        .ig-tm{font-size:10px;color:var(--t3)}
+
+        /* Web Chat Panel */
+        .chat-panel{background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+        .chat-panel-hdr{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+        .chat-panel-hdr .dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:p 2s ease-in-out infinite}
+        .chat-panel-hdr span{font-size:11px;font-weight:700}
+        .chat-messages{padding:12px 14px;flex:1;min-height:120px;max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+        .chat-msg{max-width:90%;padding:8px 12px;border-radius:10px;font-size:11px;line-height:1.5}
+        .chat-msg.bot{background:var(--green-d);color:var(--t2);align-self:flex-start;border-bottom-left-radius:3px}
+        .chat-msg.bot strong{color:var(--green)}
+        .chat-msg.user{background:rgba(255,255,255,.06);color:var(--t1);align-self:flex-end;border-bottom-right-radius:3px}
+        .chat-input-wrap{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px}
+        .chat-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:var(--f);font-size:11px;color:var(--t1);outline:none}
+        .chat-input::placeholder{color:var(--t3)}
+        .chat-input:focus{border-color:var(--green)}
+        .chat-send{background:var(--green);border:none;border-radius:8px;width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .2s;flex-shrink:0}
+        .chat-send:hover{opacity:.85}
+        .chat-send svg{width:14px;height:14px}
+
+        /* Responsive */
+        @media(max-width:1100px){.dash{grid-template-columns:1fr 1fr}.col:nth-child(3){grid-column:span 2}}
+        @media(max-width:700px){
+            .dash{grid-template-columns:1fr}.col:nth-child(3){grid-column:span 1}
+            .vg{grid-template-columns:repeat(3,1fr)}
+        }
+
+        /* Bottom bar (mobile) */
+        .bottom-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:90;padding:12px 16px;background:var(--bg);border-top:1px solid var(--border)}
+        .bottom-bar a{display:block;width:100%;padding:14px;font-family:var(--f);font-size:14px;font-weight:600;color:#000;background:var(--green);border-radius:8px;text-align:center;text-decoration:none}
+        @media(max-width:700px){.bottom-bar{display:block}body{padding-bottom:72px}}
+    </style>
+</head>
+<body>
+
+<div class="term" id="term">
+    <div class="ln">Scanning #marketing for viral talking-head reels...</div>
+    <div class="ln">Found 9 reels (original audio, 1000+ likes, 15-90s)</div>
+    <div class="ln">Transcribing A7K2 via Whisper API... viral score: 87</div>
+    <div class="ln on">Rewriting script for @Nextgen brand voice...</div>
+</div>
+
+<div class="hdr">
+    <div class="hdr-l">
+        <h1>AlphaCMO</h1>
+        <span class="badge"><span class="dot"></span>LIVE</span>
+    </div>
+    <div class="hdr-r"><a href="/">Get AlphaCMO</a></div>
+</div>
+
+<div class="dash">
+
+<!-- ═══ COL 1: PROOF THE MACHINE IS RUNNING ═══ -->
+<div class="col">
+    <div class="agent-block">
+        <img class="ghost-img" id="g-img" src="" alt="Agent Status">
+        <div class="ghost-name" id="g-name">Transcribing</div>
+        <div class="ghost-msg" id="g-msg">Converting raw audio into precise text.</div>
+    </div>
+
+    <div>
+        <div class="ph"><span class="pt">Pipeline · 24h</span></div>
+        <div class="stats-grid">
+            <div class="stat"><div class="stat-n" style="color:var(--green)" data-metric="scripts_found">23</div><div class="stat-l">Scripts Found</div></div>
+            <div class="stat"><div class="stat-n" style="color:var(--orange)" data-metric="videos_made">18</div><div class="stat-l">Videos Made</div></div>
+            <div class="stat"><div class="stat-n" style="color:var(--purple)" data-metric="published">31</div><div class="stat-l">Published</div></div>
+            <div class="stat"><div class="stat-n" style="color:var(--t1)" data-metric="avg_score">84</div><div class="stat-l">Avg Score</div></div>
+        </div>
+    </div>
+
+    <div>
+        <div class="ph"><span class="pt">Active Clients</span><span class="pc" data-metric="client_count">5 active</span></div>
+        <div id="clientRoster">
+            <div class="client-row" data-customer-id="nextgen"><span class="client-dot active"></span><span class="client-name">@Nextgen</span><span class="client-stat">3 videos today</span></div>
+            <div class="client-row" data-customer-id="funnelforge"><span class="client-dot active"></span><span class="client-name">@FunnelForge</span><span class="client-stat">2 videos today</span></div>
+            <div class="client-row" data-customer-id="revenuestack"><span class="client-dot active"></span><span class="client-name">@RevenueStack</span><span class="client-stat">4 videos today</span></div>
+            <div class="client-row" data-customer-id="scaleops"><span class="client-dot idle"></span><span class="client-name">@ScaleOps.io</span><span class="client-stat">scouting...</span></div>
+            <div class="client-row" data-customer-id="growthlab"><span class="client-dot active"></span><span class="client-name">@GrowthLab</span><span class="client-stat">1 video today</span></div>
+        </div>
+    </div>
+
+    <div>
+        <div class="ph"><span class="pt">Niches Tracked</span><span class="pc">nightly scan</span></div>
+        <div class="niche-tags" id="nicheTags">
+            <span class="niche-tag">#marketing</span>
+            <span class="niche-tag">#digitalmarketing</span>
+            <span class="niche-tag">#agencylife</span>
+            <span class="niche-tag">#saas</span>
+            <span class="niche-tag">#contentcreator</span>
+            <span class="niche-tag">#coaching</span>
+            <span class="niche-tag">#personalbranding</span>
+            <span class="niche-tag">#entrepreneurship</span>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ COL 2: WATCH IT WORK ═══ -->
+<div class="col">
+    <div>
+        <div class="ph"><span class="pt">Pipeline</span><span class="pc">active tasks</span></div>
+        <div id="pipelineTasks">
+            <div class="tc" data-task-code="A7K2">
+                <div class="tc-t">A7K2 — "Stop running ads until you fix this..."</div>
+                <div class="tc-g">@Nextgen · Score: 87 · #marketing</div>
+                <div class="tc-m"><span class="tb c">COMPOSITING</span><span class="tt">Running for 2m 14s</span></div>
+            </div>
+            <div class="tc" data-task-code="N3S7">
+                <div class="tc-t">N3S7 — "The agency model is dead. Here's what replaced it..."</div>
+                <div class="tc-g">@FunnelForge · Score: 91 · #agencylife</div>
+                <div class="tc-m"><span class="tb s">RENDERING</span><span class="tt">Running for 1m 03s</span></div>
+            </div>
+            <div class="tc" data-task-code="P6Y2">
+                <div class="tc-t">P6Y2 — "I replaced my content team with this..."</div>
+                <div class="tc-g">@RevenueStack · Score: 74 · #contentcreator</div>
+                <div class="tc-m"><span class="tb r">REWRITING</span><span class="tt">Running for 0m 22s</span></div>
+            </div>
+        </div>
+        <div class="more" data-metric="queue_count">+ 4 tasks queued</div>
+    </div>
+
+    <div>
+        <div class="ph"><span class="pt">Recent Videos</span><span class="pc" data-metric="videos_24h">18 in last 24h</span></div>
+        <div class="vg" id="videoGrid">
+            <div class="vc"><div class="vt" data-task-code="A7K2"><div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--t3);font-family:var(--fc)">A7K2</div><div class="play">▶</div></div><div class="vg-id">A7K2</div><span class="vg-st ren">Compositing</span></div>
+            <div class="vc"><div class="vt" data-task-code="K9M1"><div style="width:100%;height:100%;background:linear-gradient(135deg,#1a2e1a,#213e16);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--t3);font-family:var(--fc)">K9M1</div><div class="play">▶</div></div><div class="vg-id">K9M1</div><span class="vg-st pub">Published</span></div>
+            <div class="vc"><div class="vt" data-task-code="W4R8"><div style="width:100%;height:100%;background:linear-gradient(135deg,#2e1a2e,#3e1642);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--t3);font-family:var(--fc)">W4R8</div><div class="play">▶</div></div><div class="vg-id">W4R8</div><span class="vg-st pub">Published</span></div>
+            <div class="vc"><div class="vt" data-task-code="N3S7"><div style="width:100%;height:100%;background:linear-gradient(135deg,#2e2a1a,#3e3416);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--t3);font-family:var(--fc)">N3S7</div><div class="play">▶</div></div><div class="vg-id">N3S7</div><span class="vg-st ren">Rendering</span></div>
+            <div class="vc"><div class="vt" data-task-code="T2Q5"><div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#162130);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--t3);font-family:var(--fc)">T2Q5</div><div class="play">▶</div></div><div class="vg-id">T2Q5</div><span class="vg-st pub">Published</span></div>
+            <div class="vc"><div class="vt" data-task-code="F6J3"><div style="width:100%;height:100%;background:linear-gradient(135deg,#2e1a1a,#3e1616);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--t3);font-family:var(--fc)">F6J3</div><div class="play">▶</div></div><div class="vg-id">F6J3</div><span class="vg-st pub">Published</span></div>
+            <div class="vc"><div class="vt" data-task-code="E2W7"><div style="width:100%;height:100%;background:linear-gradient(135deg,#1a2e2e,#163e3a);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--t3);font-family:var(--fc)">E2W7</div><div class="play">▶</div></div><div class="vg-id">E2W7</div><span class="vg-st rev">In Review</span></div>
+            <div class="vc"><div class="vt" data-task-code="B8L4"><div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a1a,#222);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--t3);font-family:var(--fc)">B8L4</div><div class="play">▶</div></div><div class="vg-id">B8L4</div><span class="vg-st pub">Published</span></div>
+        </div>
+        <div class="more" style="margin-top:8px">+ 10 more videos</div>
+    </div>
+
+    <div>
+        <div class="ph"><span class="pt">Script Preview</span><span class="pc" data-task-code="A7K2">A7K2 · Score: 87</span></div>
+        <div class="sp" id="scriptPreview">
+            <span class="hook">[HOOK]</span> "Stop running ads until you fix this one thing..."<br><br>
+            <span class="body">[BODY]</span> "I spent $47K on Meta ads last quarter. The first $30K was completely wasted. Not because the ads were bad — they were great. The problem was my landing page loaded in 6 seconds and my offer was buried below the fold..."<br><br>
+            <span class="cta">[CTA]</span> "Drop 'AUDIT' in the comments and I'll send you my exact checklist."
+        </div>
+        <div style="margin-top:6px;font-size:10px;color:var(--t3)">Source: 42K views · 47s · #marketing</div>
+    </div>
+</div>
+
+<!-- ═══ COL 3: CONVERT + SOCIAL PROOF ═══ -->
+<div class="col">
+    <div class="cta-card">
+        <h3>30+ videos on your Instagram. Monthly.</h3>
+        <div class="price-line">~$16/video</div>
+        <div class="price-compare">
+            Freelancer: <s>$150–500/video</s><br>
+            Agency: <s>$3K–10K/month</s>
+        </div>
+        <a href="/new" class="cta-btn">Get AlphaCMO →</a>
+        <div class="spots">$499/mo · No contracts · Cancel anytime</div>
+    </div>
+
+    <div>
+        <div class="ph"><span class="pt">Activity Feed</span><span class="pc">AlphaCMO narrating</span></div>
+        <div id="activityFeed">
+            <div class="feed-item" data-event-type="video.published">
+                <div class="feed-avi">α</div>
+                <div class="feed-body">
+                    <div class="feed-msg">Published <span class="code">K9M1</span> to <strong>@Nextgen</strong>'s Instagram. Hook: "Your funnel isn't broken..."</div>
+                    <div class="feed-time">2m ago</div>
+                </div>
+            </div>
+            <div class="feed-item" data-event-type="video.completed">
+                <div class="feed-avi">α</div>
+                <div class="feed-body">
+                    <div class="feed-msg">Video <span class="code">A7K2</span> compositing complete for <strong>@Nextgen</strong>. Sending for approval.</div>
+                    <div class="feed-time">5m ago</div>
+                </div>
+            </div>
+            <div class="feed-item" data-event-type="script.rewritten">
+                <div class="feed-avi">α</div>
+                <div class="feed-body">
+                    <div class="feed-msg">Rewrote <span class="code">N3S7</span> for <strong>@FunnelForge</strong>. Score: 91. This one's going to hit.</div>
+                    <div class="feed-time">8m ago</div>
+                </div>
+            </div>
+            <div class="feed-item" data-event-type="scout.completed">
+                <div class="feed-avi">α</div>
+                <div class="feed-body">
+                    <div class="feed-msg">Overnight scout complete. Found <strong>23 scripts</strong> across 8 niches. 7 promoted to production.</div>
+                    <div class="feed-time">14m ago</div>
+                </div>
+            </div>
+            <div class="feed-item" data-event-type="video.published">
+                <div class="feed-avi">α</div>
+                <div class="feed-body">
+                    <div class="feed-msg">Published <span class="code">W4R8</span> to <strong>@RevenueStack</strong>. 3rd reel this morning.</div>
+                    <div class="feed-time">22m ago</div>
+                </div>
+            </div>
+            <div class="feed-item" data-event-type="capture.created">
+                <div class="feed-avi">α</div>
+                <div class="feed-body">
+                    <div class="feed-msg">Captured <span class="code">P6Y2</span> from #contentcreator. Score: 74. Promoting for <strong>@RevenueStack</strong>.</div>
+                    <div class="feed-time">31m ago</div>
+                </div>
+            </div>
+            <div class="feed-item" data-event-type="video.approved">
+                <div class="feed-avi">α</div>
+                <div class="feed-body">
+                    <div class="feed-msg"><strong>@GrowthLab</strong> approved <span class="code">T2Q5</span>. Publishing now.</div>
+                    <div class="feed-time">45m ago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="ph"><span class="pt">Instagram</span><span class="pc">published reels</span></div>
+        <div id="igFeed">
+            <div class="ig"><div class="ig-t">"You're spending $3K/month on ads and wondering why leads don't convert..."</div><div class="ig-m"><span class="ig-c">@Nextgen</span><span class="ig-tm">3m ago</span></div></div>
+            <div class="ig"><div class="ig-t">"Every agency owner I know made this mistake in Q1..."</div><div class="ig-m"><span class="ig-c">@FunnelForge</span><span class="ig-tm">1h ago</span></div></div>
+            <div class="ig"><div class="ig-t">"I replaced my entire content team with an AI pipeline..."</div><div class="ig-m"><span class="ig-c">@RevenueStack</span><span class="ig-tm">3h ago</span></div></div>
+            <div class="ig"><div class="ig-t">"Your funnel isn't broken. Your offer is..."</div><div class="ig-m"><span class="ig-c">@GrowthLab</span><span class="ig-tm">8h ago</span></div></div>
+        </div>
+        <div class="more" data-metric="published_24h">+ 31 reels published in the past 24h</div>
+    </div>
+
+    <!-- OpenClaw Web Chat -->
+    <div class="chat-panel" id="chatPanel">
+        <div class="chat-panel-hdr">
+            <span class="dot"></span>
+            <span>Talk to AlphaCMO</span>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg bot">Hey — I'm <strong>AlphaCMO</strong>. I find viral trends, create avatar videos, and publish while you sleep. Ask me anything.</div>
+        </div>
+        <div class="chat-input-wrap">
+            <input class="chat-input" id="chatInput" type="text" placeholder="Ask AlphaCMO anything..." onkeydown="if(event.key==='Enter')sendChat()">
+            <button class="chat-send" onclick="sendChat()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<div class="bottom-bar">
+    <a href="/new">Get AlphaCMO — ~$16/video →</a>
+</div>
+
+<script>
+/* Terminal */
+const tl=['Scanning #contentmarketing for viral reels...','Found 11 reels · filtering uses_original_audio...','Transcribing N3S7 via Whisper API... 47s','Viral score: 91 · hook: "The agency model is dead..."','Writing to ClickUp → Viral Reels → analyzed','Creator triggered: A7K2 → promoted','Reading brand-voice.md for Nextgen...','Script rewrite complete → Telegram for review','Customer approved → avatar generating...','Generating avatar video → stock-male','Avatar engine... processing (2m 14s)','Avatar engine... complete ✓','Downloading MP4 → compositing overlays','Rendering 1080x1920 · captions + overlays','A7K2-final.mp4 → Telegram for approval','Approved → Metricool → Instagram Reels','Published ✓ → A7K2 complete','Ad-hoc: reel URL in Telegram','P6Y2 → Score: 74 → ClickUp posted','Scanning #agencylife for viral reels...'];
+const term=document.getElementById('term');let ti=0;
+setInterval(()=>{const ls=term.querySelectorAll('.ln');ls.forEach(l=>l.classList.remove('on'));if(ls.length>=4)ls[0].remove();const n=document.createElement('div');n.className='ln on';n.textContent=tl[ti%tl.length];term.appendChild(n);ti++},3200);
+
+/* Agent Status */
+const imgBase='https://raw.githubusercontent.com/AlphaCMOAI/AlphaCMO/main/website/images/';
+const gs=[
+{name:'Transcribing',msg:'Converting raw audio from client briefings into precise text — the foundation for every script.',img:'01-Transcribing-AlphaCMO-AI-Marketing-Automation-Agent-115.jpg'},
+{name:'Composing',msg:'Crafting the narrative arc, shaping every word for the exact emotional weight the audience needs.',img:'02-Composing-AlphaCMO-AI-Marketing-Automation-Agent-118.jpg'},
+{name:'Architecting',msg:'Designing the video blueprint — pacing, segments, transitions — so every second serves a purpose.',img:'03-Architecting-AlphaCMO-AI-Marketing-Automation-Agent-114.jpg'},
+{name:'Scheming',msg:'Mapping distribution angles, hook sequences, and platform-specific tactics.',img:'04-Scheming-AlphaCMO-AI-Marketing-Automation-Agent-120.jpg'},
+{name:'Orchestrating',msg:'Coordinating assets, talent, music, and graphics into a single production pipeline.',img:'05-Orchestrating-AlphaCMO-AI-Marketing-Automation-Agent-116.jpg'},
+{name:'Mastering',msg:'Final quality pass across audio, color, and compression for broadcast-grade output.',img:'06-Mastering-AlphaCMO-AI-Marketing-Automation-Agent-106.jpg'},
+{name:'Splicing',msg:'Cutting and rejoining footage at exact edit points for seamless continuity.',img:'07-Splicing-AlphaCMO-AI-Marketing-Automation-Agent-126.jpg'},
+{name:'Rigging',msg:'Building the skeletal control system so every avatar micro-expression moves naturally.',img:'08-Rigging-AlphaCMO-AI-Marketing-Automation-Agent-109.jpg'},
+{name:'Lip-Syncing',msg:'Aligning mouth shapes to audio phonemes frame by frame.',img:'09-Lip-Syncing-AlphaCMO-AI-Marketing-Automation-Agent-101.jpg'},
+{name:'Deepfaking',msg:'Mapping photorealistic facial textures so the avatar passes as authentic talent.',img:'10-Deepfaking-AlphaCMO-AI-Marketing-Automation-Agent-108.jpg'},
+{name:'Motion-Capturing',msg:'Translating human gestures and body language onto the digital avatar.',img:'11-Motion-Capturing-AlphaCMO-AI-Marketing-Automation-Agent-107.jpg'},
+{name:'Weaponizing',msg:'Reverse-engineering the algorithm to turn a single video into a distribution event.',img:'12-Weaponizing-AlphaCMO-AI-Marketing-Automation-Agent-103.jpg'},
+{name:'Psych-Profiling',msg:'Building behavioral models so every hook exploits how they process information.',img:'13-Psych-Profiling-AlphaCMO-AI-Marketing-Automation-Agent-104.jpg'},
+{name:'War-Gaming',msg:'Simulating competitor responses and stress-testing the campaign.',img:'14-War-Gaming-AlphaCMO-AI-Marketing-Automation-Agent-110.jpg'},
+{name:'Mythmaking',msg:'Engineering a narrative so magnetic the audience adopts it as identity.',img:'15-Mythmaking-AlphaCMO-AI-Marketing-Automation-Agent-112.jpg'},
+{name:'Narrative-Hijacking',msg:'Intercepting trending moments and redirecting the conversation to the brand.',img:'16-Narrative-Hijacking-AlphaCMO-AI-Marketing-Automation-Agent-113.jpg'},
+{name:'Mindshare-Sieging',msg:'Flooding touchpoints until the brand occupies all mental real estate.',img:'17-Mindshare-Sieging-AlphaCMO-AI-Marketing-Automation-Agent-102.jpg'},
+{name:'Signal-Jamming',msg:'Timing content to drown out competitor messaging and own the window.',img:'18-Signal-Jamming-AlphaCMO-AI-Marketing-Automation-Agent-117.jpg'},
+{name:'Storyboarding',msg:'Sketching each shot and transition frame by frame before production.',img:'19-Storyboarding-AlphaCMO-AI-Marketing-Automation-Agent-105.jpg'},
+{name:'Color-Grading',msg:'Manipulating hue, shadow, and highlight for an unmistakable cinematic tone.',img:'20-Color-Grading-AlphaCMO-AI-Marketing-Automation-Agent-125.jpg'},
+{name:'Sequencing',msg:'Arranging clips into a locked timeline where every cut hits precisely.',img:'21-Sequencing-AlphaCMO-AI-Marketing-Automation-Agent-119.jpg'},
+{name:'Rendering',msg:'Compiling all layers into a final pixel-perfect export ready for delivery.',img:'22-Rendering-AlphaCMO-AI-Marketing-Automation-Agent-124.jpg'},
+];
+gs.forEach(s=>{const i=new Image();i.src=imgBase+encodeURIComponent(s.img)});
+const gImg=document.getElementById('g-img');
+gImg.src=imgBase+encodeURIComponent(gs[0].img);
+gImg.onload=()=>gImg.classList.add('loaded');
+let gi=0;
+setInterval(()=>{gi=(gi+1)%gs.length;const s=gs[gi];gImg.classList.remove('loaded');setTimeout(()=>{gImg.src=imgBase+encodeURIComponent(s.img);gImg.onload=()=>gImg.classList.add('loaded');document.getElementById('g-name').textContent=s.name;document.getElementById('g-msg').textContent=s.msg},300)},6000);
+
+/* Live timers */
+setInterval(()=>{document.querySelectorAll('.tt').forEach(t=>{const m=t.textContent.match(/(\d+)m (\d+)s/);if(m){let min=+m[1],sec=+m[2]+1;if(sec>=60){sec=0;min++}t.textContent=`Running for ${min}m ${String(sec).padStart(2,'0')}s`}})},1000);
+
+/* Chat — placeholder for OpenClaw WebSocket */
+function sendChat(){
+    const input=document.getElementById('chatInput');
+    const msg=input.value.trim();
+    if(!msg)return;
+    const c=document.getElementById('chatMessages');
+    const u=document.createElement('div');
+    u.className='chat-msg user';
+    u.textContent=msg;
+    c.appendChild(u);
+    input.value='';
+    c.scrollTop=c.scrollHeight;
+    // TODO: Replace with OpenClaw WebSocket / API call
+    setTimeout(()=>{
+        const b=document.createElement('div');
+        b.className='chat-msg bot';
+        b.innerHTML="I'm being connected to my brain right now. Soon I'll answer that live. In the meantime — <a href='/new' style='color:var(--green)'>get started here</a>.";
+        c.appendChild(b);
+        c.scrollTop=c.scrollHeight;
+    },1200);
+}
+
+/*
+ * ═══ SUPABASE INTEGRATION HOOKS ═══
+ *
+ * 1. STATS: query events table → update [data-metric] elements
+ *    document.querySelector('[data-metric="scripts_found"]').textContent = count;
+ *
+ * 2. ACTIVITY FEED: subscribe to Supabase realtime on events table
+ *    supabase.channel('events').on('postgres_changes',{event:'INSERT',...},payload=>{
+ *      prependFeedItem(payload.new);
+ *    }).subscribe();
+ *
+ * 3. CLIENT ROSTER: distinct customer_id from events → #clientRoster
+ *
+ * 4. VIDEO GRID: events where event_type in ('video.completed','video.published')
+ *    → hydrate #videoGrid with thumbnail URLs from event_data
+ *
+ * 5. PIPELINE: events where status != completed → #pipelineTasks
+ *
+ * 6. PER-CLIENT: read slug from URL /live/:slug → filter all queries
+ *    const slug = window.location.pathname.split('/live/')[1];
+ */
+</script>
+</body>
+</html>
