@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlphaCMO — Pricing</title>
+    <meta name="description" content="AlphaCMO finds viral trends, creates avatar videos, and publishes — while you sleep. Starting at ~$16/video.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#000;--t1:#fff;--t2:#aaa;--t3:#666;--green:#00ff88;--green-d:rgba(0,255,136,.08);--green-g:rgba(0,255,136,.2);--border:#1a1a1a;--card:#080808;--card-hover:#0c0c0c}
+        html{font-size:16px;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+        body{background:var(--bg);color:var(--t1);font-family:'Inter',system-ui,sans-serif;line-height:1.6;overflow-x:hidden}
+        body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+        .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px}
+        .mono{font-family:'JetBrains Mono',monospace}
+
+        /* Nav */
+        nav{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);z-index:100}
+        nav .logo{font-size:20px;font-weight:800;letter-spacing:-.5px}
+        nav .logo span{color:var(--green)}
+        .nav-links{display:flex;gap:24px;align-items:center}
+        .nav-links a{color:var(--t2);font-size:13px;text-decoration:none;font-weight:500;transition:color .2s}
+        .nav-links a:hover{color:var(--t1)}
+
+        /* Hero */
+        .hero{padding:72px 0 48px;text-align:center}
+        .hero .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border:1px solid var(--border);border-radius:100px;font-size:12px;color:var(--t2);margin-bottom:24px;font-weight:500}
+        .hero .eyebrow .dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+        .hero h1{font-size:clamp(32px,6vw,52px);font-weight:900;letter-spacing:-2px;line-height:1.05;margin-bottom:16px}
+        .hero h1 em{font-style:normal;color:var(--green)}
+        .hero .sub{font-size:17px;color:var(--t2);max-width:560px;margin:0 auto;line-height:1.7}
+
+        /* Comparison strip */
+        .compare-strip{display:flex;justify-content:center;gap:40px;padding:32px 0 40px;flex-wrap:wrap}
+        .compare-item{text-align:center}
+        .compare-item .old{font-size:14px;color:var(--t3);text-decoration:line-through;margin-bottom:2px}
+        .compare-item .val{font-size:22px;font-weight:800;letter-spacing:-.5px}
+        .compare-item .val.green{color:var(--green)}
+        .compare-item .label{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+        /* Toggle */
+        .toggle-wrap{display:flex;justify-content:center;margin-bottom:48px}
+
+        /* Pricing Grid */
+        .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:64px}
+        .price-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px 28px;display:flex;flex-direction:column;transition:border-color .3s,transform .3s;position:relative}
+        .price-card:hover{border-color:#333;transform:translateY(-2px)}
+        .price-card.featured{border-color:var(--green);background:linear-gradient(180deg,rgba(0,255,136,.03) 0%,var(--card) 40%)}
+        .price-card.featured::before{content:'MOST POPULAR';position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;letter-spacing:1.5px;color:#000;background:var(--green);padding:3px 14px;border-radius:6px;white-space:nowrap}
+
+        .card-header{margin-bottom:24px}
+        .tier-name{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:12px}
+        .featured .tier-name{color:var(--green)}
+        .price-amount{font-size:48px;font-weight:900;letter-spacing:-2px;line-height:1}
+        .price-amount span{font-size:18px;font-weight:400;color:var(--t3);letter-spacing:0}
+        .per-video{font-size:13px;color:var(--green);margin-top:8px;font-weight:600}
+        .card-desc{font-size:14px;color:var(--t2);margin-top:12px;line-height:1.6}
+
+        .features-list{list-style:none;flex:1;margin-bottom:28px}
+        .features-list li{font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+        .features-list li:last-child{border-bottom:none}
+        .features-list .check{color:var(--green);font-weight:700;flex-shrink:0;font-size:14px;line-height:1.4}
+        .features-list .highlight{color:var(--t1);font-weight:600}
+
+        .card-cta{display:flex;align-items:center;justify-content:center;width:100%;padding:14px;font-family:inherit;font-size:14px;font-weight:700;border-radius:10px;cursor:pointer;transition:all .25s;text-decoration:none;letter-spacing:-.2px;border:none}
+        .card-cta.primary{background:var(--green);color:#000}
+        .card-cta.primary:hover{background:#00e67a;box-shadow:0 0 30px var(--green-g)}
+        .card-cta.secondary{background:transparent;color:var(--t1);border:1px solid var(--border)}
+        .card-cta.secondary:hover{border-color:var(--t2);background:rgba(255,255,255,.03)}
+
+        /* Social proof */
+        .proof{text-align:center;padding:48px 0;border-top:1px solid var(--border)}
+        .proof-quote{font-size:18px;font-weight:500;font-style:italic;max-width:580px;margin:0 auto 16px;line-height:1.7;color:var(--t2)}
+        .proof-quote strong{color:var(--t1);font-style:normal}
+
+        /* How it works — compact */
+        .how-section{padding:48px 0;border-top:1px solid var(--border)}
+        .how-section h2{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:32px;text-align:center}
+        .how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+        .how-step{text-align:center;padding:20px 12px}
+        .how-num{width:36px;height:36px;border-radius:50%;background:var(--green-d);border:1px solid rgba(0,255,136,.15);color:var(--green);display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;margin-bottom:12px}
+        .how-step h3{font-size:14px;font-weight:700;margin-bottom:6px}
+        .how-step p{font-size:12px;color:var(--t3);line-height:1.6}
+
+        /* FAQ */
+        .faq-section{padding:48px 0;border-top:1px solid var(--border)}
+        .faq-section h2{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:32px;text-align:center}
+        .faq-grid{max-width:700px;margin:0 auto}
+        .faq{border-bottom:1px solid var(--border);padding-bottom:0}
+        .faq summary{font-size:14px;font-weight:600;cursor:pointer;padding:16px 0;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px}
+        .faq summary::after{content:'+';font-size:18px;color:var(--t3);transition:transform .2s;flex-shrink:0}
+        .faq[open] summary::after{transform:rotate(45deg)}
+        .faq p{font-size:13px;color:var(--t2);line-height:1.7;padding:0 0 16px}
+
+        /* Final CTA */
+        .final-cta{text-align:center;padding:64px 0;border-top:1px solid var(--border)}
+        .final-cta h2{font-size:28px;font-weight:800;letter-spacing:-1px;margin-bottom:12px}
+        .final-cta p{color:var(--t2);font-size:15px;margin-bottom:28px}
+        .final-cta .cta-btn{display:inline-flex;align-items:center;padding:16px 40px;font-family:inherit;font-size:16px;font-weight:700;color:#000;background:var(--green);border:none;border-radius:10px;cursor:pointer;transition:all .25s;text-decoration:none;letter-spacing:-.2px}
+        .final-cta .cta-btn:hover{background:#00e67a;box-shadow:0 0 30px var(--green-g);transform:translateY(-1px)}
+        .cta-sub{font-size:12px;color:var(--t3);margin-top:12px}
+
+        /* Footer */
+        footer{border-top:1px solid var(--border);padding:24px 0;margin-top:16px}
+        footer p{font-size:12px;color:var(--t3);text-align:center}
+        footer a{color:var(--t3);text-decoration:none}
+        footer a:hover{color:var(--t2)}
+
+        /* Checkout Modal */
+        .checkout-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:24px}
+        .checkout-overlay.active{display:flex}
+        .checkout-modal{position:relative;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;background:#000;border:1px solid var(--green);border-radius:12px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+        .checkout-modal::-webkit-scrollbar{width:6px}
+        .checkout-modal::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+        .checkout-close{position:absolute;top:12px;right:12px;width:32px;height:32px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;transition:background .2s}
+        .checkout-close:hover{background:rgba(255,255,255,.15)}
+        .checkout-body{padding:0}
+
+        @media(max-width:900px){
+            .pricing-grid{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto}
+            .price-card.featured{order:-1}
+            .how-grid{grid-template-columns:repeat(2,1fr)}
+        }
+        @media(max-width:640px){
+            .hero{padding:48px 0 32px}
+            .compare-strip{gap:24px}
+            .how-grid{grid-template-columns:1fr 1fr}
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">Alpha<span>CMO</span></div>
+    <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#faq">FAQ</a>
+        <a href="#pricing">Pricing</a>
+    </div>
+</nav>
+
+<div class="wrap">
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="eyebrow"><span class="dot"></span> Autonomous video pipeline — running 24/7</div>
+        <h1>Finished videos on your Instagram.<br><em>While you sleep.</em></h1>
+        <p class="sub">AlphaCMO finds viral trends, rewrites scripts in your voice, creates AI avatar videos, and publishes — every single night. You just approve.</p>
+    </div>
+
+    <!-- Price anchoring -->
+    <div class="compare-strip">
+        <div class="compare-item">
+            <div class="old">$150–500</div>
+            <div class="val green">~$16</div>
+            <div class="label">Per video</div>
+        </div>
+        <div class="compare-item">
+            <div class="old">$3K–10K/mo</div>
+            <div class="val green">$499</div>
+            <div class="label">vs. agency</div>
+        </div>
+        <div class="compare-item">
+            <div class="old">$250K/yr</div>
+            <div class="val green">$0 equity</div>
+            <div class="label">No hires needed</div>
+        </div>
+    </div>
+
+    <!-- Pricing -->
+    <div id="pricing" class="pricing-grid">
+
+        <!-- Launch -->
+        <div class="price-card">
+            <div class="card-header">
+                <div class="tier-name">Launch</div>
+                <div class="price-amount">$499<span>/mo</span></div>
+                <div class="per-video">~$16/video</div>
+                <p class="card-desc">Full pipeline. 30 videos/month. Everything automated.</p>
+            </div>
+            <ul class="features-list">
+                <li><span class="check">✓</span><span>Nightly trend scouting (2AM)</span></li>
+                <li><span class="check">✓</span><span>Unlimited reel processing</span></li>
+                <li><span class="check">✓</span><span>Brand voice script rewriting</span></li>
+                <li><span class="check">✓</span><span class="highlight">30 AI avatar videos/month</span></li>
+                <li><span class="check">✓</span><span>Branded overlays + captions</span></li>
+                <li><span class="check">✓</span><span>Instagram Reels publishing</span></li>
+                <li><span class="check">✓</span><span>Dedicated Telegram channel</span></li>
+                <li><span class="check">✓</span><span>ClickUp pipeline dashboard</span></li>
+            </ul>
+            <button class="card-cta secondary" onclick="openCheckout('launch')">Get Started →</button>
+        </div>
+
+        <!-- Dominate -->
+        <div class="price-card featured">
+            <div class="card-header">
+                <div class="tier-name">Dominate</div>
+                <div class="price-amount">$999<span>/mo</span></div>
+                <div class="per-video">~$14/video</div>
+                <p class="card-desc">Scale output. 70 videos/month. Theme page distribution.</p>
+            </div>
+            <ul class="features-list">
+                <li><span class="check">✓</span><span>Everything in Launch</span></li>
+                <li><span class="check">✓</span><span class="highlight">70 AI avatar videos/month</span></li>
+                <li><span class="check">✓</span><span class="highlight">Posting to theme pages</span></li>
+                <li><span class="check">✓</span><span>Dedicated Slack channel</span></li>
+                <li><span class="check">✓</span><span>Priority rendering queue</span></li>
+                <li><span class="check">✓</span><span>Advanced viral scoring</span></li>
+            </ul>
+            <button class="card-cta primary" onclick="openCheckout('dominate')">Get Dominate →</button>
+        </div>
+
+        <!-- Special Ops -->
+        <div class="price-card">
+            <div class="card-header">
+                <div class="tier-name">Special Ops</div>
+                <div class="price-amount">$1,999<span>/mo</span></div>
+                <div class="per-video">White-glove</div>
+                <p class="card-desc">Everything in Dominate + strategy calls and multi-platform.</p>
+            </div>
+            <ul class="features-list">
+                <li><span class="check">✓</span><span>Everything in Dominate</span></li>
+                <li><span class="check">✓</span><span class="highlight">Weekly strategy call (30 min)</span></li>
+                <li><span class="check">✓</span><span class="highlight">Custom hashtag strategy</span></li>
+                <li><span class="check">✓</span><span class="highlight">Multi-platform publishing</span></li>
+                <li><span class="check">✓</span><span>Priority support</span></li>
+                <li><span class="check">✓</span><span>Meta Ads integration (coming soon)</span></li>
+            </ul>
+            <button class="card-cta secondary" onclick="openCheckout('specialops')">Get Special Ops →</button>
+        </div>
+    </div>
+
+    <p style="text-align:center;font-size:13px;color:var(--t3);margin-top:-48px;margin-bottom:64px">No contracts. No setup fees. Cancel anytime.</p>
+
+    <!-- How it works -->
+    <section id="how" class="how-section">
+        <h2>How it works</h2>
+        <div class="how-grid">
+            <div class="how-step">
+                <div class="how-num">1</div>
+                <h3>Scout</h3>
+                <p>Every night at 2AM, AlphaCMO scans Instagram for viral talking-head reels in your niche and ranks them by viral potential.</p>
+            </div>
+            <div class="how-step">
+                <div class="how-num">2</div>
+                <h3>Rewrite</h3>
+                <p>Top scripts get rewritten for your brand voice, your audience, and your CTA. Same viral structure, original content.</p>
+            </div>
+            <div class="how-step">
+                <div class="how-num">3</div>
+                <h3>Create</h3>
+                <p>AI avatar videos in 1080×1920 with branded overlays, synced captions, and your visual identity. Zero cameras.</p>
+            </div>
+            <div class="how-step">
+                <div class="how-num">4</div>
+                <h3>Publish</h3>
+                <p>You approve with one message. AlphaCMO publishes to Instagram Reels. TikTok and YouTube Shorts coming soon.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- The pitch block -->
+    <section style="padding:48px 0;border-top:1px solid var(--border)">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px 32px;max-width:700px;margin:0 auto">
+            <p style="font-size:15px;color:var(--t2);line-height:1.8">A reel went viral in your niche yesterday. Your competitor caught it, rewrote it for their audience, published an avatar video, and got 40K views.</p>
+            <p style="font-size:15px;color:var(--t3);line-height:1.8;margin-top:12px">You didn't even see it.</p>
+            <p style="font-size:15px;color:var(--t1);line-height:1.8;margin-top:12px;font-weight:600">AlphaCMO would have caught it at 2AM, rewritten it by 2:15, and had a video in your inbox by morning.</p>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="faq-section">
+        <h2>Questions</h2>
+        <div class="faq-grid">
+            <details class="faq">
+                <summary>What exactly does AlphaCMO do?</summary>
+                <p>Every night, AlphaCMO scans Instagram for viral talking-head reels in your niche, transcribes and scores them, rewrites the best scripts in your brand voice, generates AI avatar videos with branded overlays, and publishes to your Instagram. You control everything from Telegram on your phone.</p>
+            </details>
+            <details class="faq">
+                <summary>Do I need to be on camera?</summary>
+                <p>No. AlphaCMO generates avatar videos using AI. You can use a stock avatar, upload a photo to create a custom one, or use your own footage. Zero cameras required.</p>
+            </details>
+            <details class="faq">
+                <summary>How much of my time does this take?</summary>
+                <p>About 5 minutes per day. Review scripts and approve videos in Telegram. That's it.</p>
+            </details>
+            <details class="faq">
+                <summary>Is the content actually original?</summary>
+                <p>Yes. AlphaCMO discovers proven viral hook structures and rewrites them entirely for your voice, audience, and CTA. Only the hook pattern is borrowed — the content is 100% original.</p>
+            </details>
+            <details class="faq">
+                <summary>What platforms does it publish to?</summary>
+                <p>Instagram Reels at launch. TikTok, YouTube Shorts, and Facebook Reels are on the roadmap.</p>
+            </details>
+            <details class="faq">
+                <summary>How is this different from Okara or other AI marketing tools?</summary>
+                <p>Most AI marketing tools output strategy docs and text content. AlphaCMO outputs finished videos — published to your Instagram. Trend discovery through publishing, fully automated. Different category entirely.</p>
+            </details>
+            <details class="faq">
+                <summary>Can I cancel anytime?</summary>
+                <p>Yes. No contracts, no setup fees. Cancel from your billing dashboard and service stops at the end of your billing period.</p>
+            </details>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <div class="final-cta">
+        <h2>Stop watching competitors go viral.</h2>
+        <p>30+ branded videos on your Instagram every month. Starting at ~$16/video.</p>
+        <button class="cta-btn" onclick="openCheckout('launch')">Get Started →</button>
+        <p class="cta-sub">No contracts · Cancel anytime · First videos within 48 hours</p>
+    </div>
+
+</div>
+
+<footer><div class="wrap">
+    <p><a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · © 2026 AlphaCMO · New Empire AI</p>
+</div></footer>
+
+<!-- Checkout Modal -->
+<div class="checkout-overlay" id="checkoutOverlay" onclick="closeCheckout(event)">
+    <div class="checkout-modal" onclick="event.stopPropagation()">
+        <button class="checkout-close" onclick="closeCheckout()">&times;</button>
+        <div class="checkout-body" id="checkoutBody"></div>
+    </div>
+</div>
+
+<script>
+    // ThriveCart embed configs
+    const products = {
+        launch: {
+            html: '<div class="tc-v2-embeddable-target" data-thrivecart-account="checkout7" data-thrivecart-tpl="v2" data-thrivecart-product="26" data-thrivecart-embeddable="tc-checkout7-26-MLLN0H"></div>'
+        },
+        dominate: {
+            html: '<div class="tc-v2-embeddable-target" data-thrivecart-account="checkout7" data-thrivecart-tpl="v2" data-thrivecart-product="27" data-thrivecart-embeddable="tc-checkout7-27-HG3EF5"></div>'
+        },
+        specialops: {
+            html: '<div class="tc-v2-embeddable-target" data-thrivecart-account="checkout7" data-thrivecart-tpl="v2" data-thrivecart-product="28" data-thrivecart-embeddable="tc-checkout7-28-CSX4XT"></div>'
+        }
+    };
+
+    function openCheckout(plan) {
+        const overlay = document.getElementById('checkoutOverlay');
+        const body = document.getElementById('checkoutBody');
+        body.innerHTML = products[plan].html;
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        // Re-run ThriveCart embed script
+        const s = document.createElement('script');
+        s.src = '//tinder.thrivecart.com/embed/v2/thrivecart.js';
+        s.async = true;
+        body.appendChild(s);
+    }
+
+    function closeCheckout(e) {
+        if (e && e.target !== e.currentTarget) return;
+        const overlay = document.getElementById('checkoutOverlay');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        document.getElementById('checkoutBody').innerHTML = '';
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeCheckout();
+    });
+</script>
+
+</body>
+</html>
