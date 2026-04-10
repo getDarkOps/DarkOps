@@ -9,9 +9,8 @@
     { "source": "/start", "destination": "/start.html" },
     { "source": "/report", "destination": "/report.html" },
     { "source": "/welcome", "destination": "/welcome.html" },
-    { "source": "/dashboard/(.*)", "destination": "/dashboard.html" },
-    { "source": "/dashboard", "destination": "/dashboard.html" },
-    { "source": "/live/(.*)", "destination": "/client-live.html" }
+    { "source": "/dashboard/:path*", "destination": "/dashboard.html" },
+    { "source": "/live/:path*", "destination": "/client-live.html" }
   ],
   "headers": [
     {
