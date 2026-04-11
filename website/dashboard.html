@@ -146,8 +146,8 @@
                     <div class="check-box">1</div>
                     <div class="check-body">
                         <h4>Complete your brand questionnaire</h4>
-                        <p>Tell us your brand's tone, target audience, key phrases, topics to avoid, and call-to-action style. Takes 5 minutes — this is how your agent learns your voice.</p>
-                        <a class="action" id="brandFormLink" href="https://alphacmo.ai/onboarding" target="_blank">Fill out questionnaire →</a>
+                        <p>Tell us your brand's tone, target audience, key phrases, topics to avoid, and call-to-action style. Fill out the form or just message your brand details to your agent in Telegram.</p>
+                        <a class="action" id="brandFormLink" href="https://alphacmo.ai/onboarding" target="_blank">Fill out form →</a>
                     </div>
                 </div>
                 <div class="check-item" id="step-telegram">
@@ -198,18 +198,7 @@ const SB_KEY = 'sb_publishable_Ll3KUfVgGqeCMUTSlAd4bA_YoD-SHkA';
 // ============================================================
 
 const path = window.location.pathname.replace(/\/+$/, '').split('/');
-let CID = path[path.length - 1];
-
-// If no slug in path, try to extract from ThriveCart redirect params
-if (!CID || CID === 'dashboard') {
-    const params = new URLSearchParams(window.location.search);
-    const email = params.get('thrivecart[customer][email]');
-    if (email) {
-        CID = email.split('@')[0].toLowerCase().replace(/\./g, '').replace(/\+/g, '');
-        // Redirect to clean dashboard URL
-        window.history.replaceState(null, '', '/dashboard/' + CID);
-    }
-}
+const CID = path[path.length - 1];
 
 if (!CID || CID === 'dashboard') {
     document.getElementById('loadingState').style.display = 'none';
@@ -326,15 +315,5 @@ async function init() {
     showEvents(events);
 
     setInterval(async () => {
-        if (!polling) return;
         const ev = await sbGet('events', 'customer_id=eq.' + CID + '&order=created_at.asc&limit=100');
-        showEvents(ev);
-        const cs = await sbGet('customers', 'id=eq.' + CID + '&limit=1');
-        if (cs.length) showCustomer(cs[0]);
-    }, polling ? 3000 : 30000);
-}
-
-init();
-</script>
-</body>
-</html>
+        sh
