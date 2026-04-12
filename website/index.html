@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlphaCMO — Finds Daily Trends. Creates Viral Videos. While You Sleep.</title>
-    <meta name="description" content="AlphaCMO finds viral trends, creates branded avatar videos, and publishes to Instagram — all while you sleep. Enter your handle for a free analysis.">
+    <title>DarkOps — Finds Daily Trends. Creates Viral Videos. While You Sleep.</title>
+    <meta name="description" content="DarkOps finds viral trends, creates branded avatar videos, and publishes to Instagram — all while you sleep. Enter your handle for a free analysis.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://alphacmo.ai">
-    <meta property="og:title" content="AlphaCMO — Your AI Video Engine That Never Sleeps">
+    <meta property="og:url" content="https://darkops.team">
+    <meta property="og:title" content="DarkOps — Your AI Video Engine That Never Sleeps">
     <meta property="og:description" content="Enter your Instagram handle. See what viral trends you're missing. Get 30+ branded videos/month on autopilot.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -86,6 +86,47 @@
         .cta-section p{font-size:16px;color:var(--t2);margin-bottom:28px}
         .cta-btn{display:inline-flex;align-items:center;padding:16px 36px;font-family:var(--f);font-size:16px;font-weight:700;color:#000;background:var(--green);border:none;border-radius:10px;cursor:pointer;transition:all .2s;text-decoration:none}.cta-btn:hover{background:#00e67a;box-shadow:0 0 24px var(--green-g);transform:translateY(-1px)}
 
+        /* The Squad */
+        .squad{position:relative;z-index:1;padding:72px 24px;border-top:1px solid var(--border)}
+        .squad-inner{max-width:900px;margin:0 auto}
+        .squad-label{font-size:12px;font-weight:600;color:var(--green);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:12px;text-align:center}
+        .squad-title{font-size:clamp(28px,5vw,38px);font-weight:900;letter-spacing:-1px;text-align:center;margin-bottom:10px}
+        .squad-sub{font-size:15px;color:var(--t2);text-align:center;max-width:560px;margin:0 auto 48px;line-height:1.6}
+        .squad-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+        .agent-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px 14px;text-align:center;transition:all .3s;position:relative;overflow:hidden}
+        .agent-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--green);opacity:0;transition:opacity .3s}
+        .agent-card:hover{border-color:var(--green);transform:translateY(-3px)}
+        .agent-card:hover::before{opacity:1}
+        .agent-icon{font-size:22px;margin-bottom:10px}
+        .agent-name{font-family:var(--fc);font-size:11px;font-weight:700;color:var(--t1);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+        .agent-role{font-size:11px;color:var(--t3);line-height:1.45}
+
+        /* Ops Pipeline */
+        .ops{position:relative;z-index:1;padding:72px 24px;border-top:1px solid var(--border)}
+        .ops-inner{max-width:900px;margin:0 auto}
+        .ops-label{font-size:12px;font-weight:600;color:var(--green);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:12px;text-align:center}
+        .ops-title{font-size:clamp(28px,5vw,38px);font-weight:900;letter-spacing:-1px;text-align:center;margin-bottom:48px}
+        .ops-pipeline{display:flex;align-items:flex-start;justify-content:center;gap:0;flex-wrap:wrap}
+        .ops-step{display:flex;flex-direction:column;align-items:center;gap:10px;width:150px;padding:0 8px}
+        .ops-icon{width:52px;height:52px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;transition:all .3s}
+        .ops-step:hover .ops-icon{border-color:var(--green);background:var(--green-b);transform:translateY(-4px)}
+        .ops-name{font-family:var(--fc);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+        .ops-desc{font-size:11px;color:var(--t3);line-height:1.5;text-align:center}
+        .ops-arrow{color:var(--t3);font-family:var(--fc);font-size:18px;padding:14px 4px 0;align-self:flex-start;opacity:.3}
+
+        /* Mission statement */
+        .mission{position:relative;z-index:1;padding:72px 24px;border-top:1px solid var(--border);text-align:center}
+        .mission-inner{max-width:640px;margin:0 auto}
+        .mission h2{font-size:clamp(24px,5vw,36px);font-weight:900;letter-spacing:-1px;margin-bottom:16px;line-height:1.15}
+        .mission h2 em{font-style:normal;color:var(--green)}
+        .mission p{font-size:16px;color:var(--t2);line-height:1.65;margin-bottom:8px}
+
+        /* Final CTA */
+        .final-cta{position:relative;z-index:1;padding:72px 24px;border-top:1px solid var(--border);text-align:center}
+        .final-cta-inner{max-width:600px;margin:0 auto}
+        .final-cta h2{font-size:clamp(24px,4vw,32px);font-weight:900;letter-spacing:-.5px;margin-bottom:10px}
+        .final-cta p{font-size:16px;color:var(--t2);margin-bottom:28px;line-height:1.6}
+
         /* Footer */
         footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:32px 24px}
         .foot-inner{max-width:800px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
@@ -116,6 +157,9 @@
             .proof{gap:20px}.proof-n{font-size:18px}
             .pipeline{flex-direction:column;align-items:center;gap:20px}
             .pipe-arrow{display:none}
+            .ops-pipeline{flex-direction:column;align-items:center;gap:20px}
+            .ops-arrow{display:none}
+            .squad-grid{grid-template-columns:repeat(2,1fr)}
             .how h2{font-size:24px}
             .nav-r .link{display:none}
         }
@@ -134,7 +178,7 @@
 <!-- Nav -->
 <nav class="nav">
     <div class="nav-l">
-        <h1>AlphaCMO</h1>
+        <h1>DarkOps</h1>
         <span class="badge"><span class="dot"></span>LIVE</span>
     </div>
     <div class="nav-r">
@@ -147,7 +191,7 @@
 <section class="hero">
     <div class="hero-tag">AI-Powered Viral Video Engine</div>
     <h2>Finds daily trends. Creates viral videos. <em>While you sleep.</em></h2>
-    <p class="hero-sub">Enter your Instagram handle and see what viral content you're missing in your niche — plus how AlphaCMO would turn it into 30+ branded videos every month.</p>
+    <p class="hero-sub">Enter your Instagram handle and see what viral content you're missing in your niche — plus how DarkOps would turn it into 30+ branded videos every month.</p>
 
     <!-- THE INPUT -->
     <div class="search-wrap">
@@ -202,6 +246,124 @@
     <button class="cta-btn" onclick="document.getElementById('handleInput').focus();window.scrollTo({top:0,behavior:'smooth'})">Analyze my Instagram →</button>
 </section>
 
+<!-- ═══ THE SQUAD ═══ -->
+<section class="squad">
+    <div class="squad-inner">
+        <div class="squad-label">The Team</div>
+        <h2 class="squad-title">10 Agents. Each a Specialist.</h2>
+        <p class="squad-sub">Every agent has a single job. Together, they run an autonomous content operation that never sleeps, never misses a trend, and never stops publishing.</p>
+        <div class="squad-grid">
+            <div class="agent-card">
+                <div class="agent-icon">⚡</div>
+                <div class="agent-name">Commander</div>
+                <div class="agent-role">Orchestrates all agents, routes work, escalates decisions, manages model switching</div>
+            </div>
+            <div class="agent-card">
+                <div class="agent-icon">🔍</div>
+                <div class="agent-name">Scout</div>
+                <div class="agent-role">Scans thousands of content signals nightly, discovers viral opportunities in your niche</div>
+            </div>
+            <div class="agent-card">
+                <div class="agent-icon">🎯</div>
+                <div class="agent-name">Strategist</div>
+                <div class="agent-role">Synthesizes overnight findings into actionable morning briefings with clear recommendations</div>
+            </div>
+            <div class="agent-card">
+                <div class="agent-icon">✍️</div>
+                <div class="agent-name">Writer</div>
+                <div class="agent-role">Rewrites trending scripts in your brand voice with your CTA style, generates thumbnail hooks</div>
+            </div>
+            <div class="agent-card">
+                <div class="agent-icon">🎬</div>
+                <div class="agent-name">Director</div>
+                <div class="agent-role">Selects avatars, manages video production queue, coordinates rendering pipeline</div>
+            </div>
+            <div class="agent-card">
+                <div class="agent-icon">💬</div>
+                <div class="agent-name">Captioner</div>
+                <div class="agent-role">Transcribes rendered audio at word level, generates precision-timed caption data for every frame</div>
+            </div>
+            <div class="agent-card">
+                <div class="agent-icon">🎨</div>
+                <div class="agent-name">Editor</div>
+                <div class="agent-role">Composites branded overlays, captions, intros, and CTAs onto raw footage — renders final video</div>
+            </div>
+            <div class="agent-card">
+                <div class="agent-icon">📲</div>
+                <div class="agent-name">Publisher</div>
+                <div class="agent-role">Schedules and publishes finished content to social platforms on your timeline</div>
+            </div>
+            <div class="agent-card">
+                <div class="agent-icon">📊</div>
+                <div class="agent-name">Sentinel</div>
+                <div class="agent-role">Monitors published content performance — tracks views, engagement, reach. Feeds insights back</div>
+            </div>
+            <div class="agent-card">
+                <div class="agent-icon">🛡️</div>
+                <div class="agent-name">Ops</div>
+                <div class="agent-role">Monitors pipeline health, retries failures, manages task lifecycle, keeps everything running 24/7</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ OPERATIONS PIPELINE ═══ -->
+<section class="ops">
+    <div class="ops-inner">
+        <div class="ops-label">Operations Pipeline</div>
+        <h2 class="ops-title">From signal intercept to published reel</h2>
+        <div class="ops-pipeline">
+            <div class="ops-step">
+                <div class="ops-icon">🔍</div>
+                <div class="ops-name">Recon</div>
+                <div class="ops-desc">Nightly scan of Instagram for viral talking-head reels in your niche</div>
+            </div>
+            <div class="ops-arrow">→</div>
+            <div class="ops-step">
+                <div class="ops-icon">🎯</div>
+                <div class="ops-name">Analyze</div>
+                <div class="ops-desc">Transcribe, score by engagement, rank by viral potential</div>
+            </div>
+            <div class="ops-arrow">→</div>
+            <div class="ops-step">
+                <div class="ops-icon">✍️</div>
+                <div class="ops-name">Rewrite</div>
+                <div class="ops-desc">Adapt proven scripts for your brand voice and audience</div>
+            </div>
+            <div class="ops-arrow">→</div>
+            <div class="ops-step">
+                <div class="ops-icon">🎬</div>
+                <div class="ops-name">Fabricate</div>
+                <div class="ops-desc">Generate avatar video with overlays, captions, and branding</div>
+            </div>
+            <div class="ops-arrow">→</div>
+            <div class="ops-step">
+                <div class="ops-icon">🚀</div>
+                <div class="ops-name">Deploy</div>
+                <div class="ops-desc">Publish approved reel to Instagram. Mission complete.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ MISSION STATEMENT ═══ -->
+<section class="mission">
+    <div class="mission-inner">
+        <h2>Let's be real. The job of a CMO is to <br><em>GO VIRAL.</em></h2>
+        <p>That's it. That's all. It's not to attend meetings or design a new campaign that may not work. The mission is to just go VIRAL.</p>
+        <p>DarkOps is a 10-agent AI team built for one thing — making your brand impossible to ignore.</p>
+    </div>
+</section>
+
+<!-- ═══ FINAL CTA ═══ -->
+<section class="final-cta">
+    <div class="final-cta-inner">
+        <h2>Your competitors are posting right now. Tomorrow, you will be too.</h2>
+        <p>Get a free analysis and gameplan — see what viral content you're missing in your niche.</p>
+        <button class="cta-btn" onclick="document.getElementById('handleInput').focus();window.scrollTo({top:0,behavior:'smooth'})">Get started for free →</button>
+    </div>
+</section>
+
 <!-- Footer -->
 <footer>
     <div class="foot-inner">
@@ -211,7 +373,7 @@
             <a href="/terms">Terms</a>
             <a href="/privacy">Privacy</a>
         </div>
-        <span class="foot-copy">© 2026 AlphaCMO · New Empire AI</span>
+        <span class="foot-copy">© 2026 DarkOps · New Empire AI</span>
     </div>
 </footer>
 
