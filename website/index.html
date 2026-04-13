@@ -112,6 +112,23 @@
         .pipe-desc{font-size:12px;color:var(--t3);line-height:1.5;text-align:center}
         .pipe-arrow{color:var(--t3);font-family:var(--fc);font-size:18px;padding:12px 4px 0;align-self:flex-start;opacity:.3}
 
+        /* Dedicated machine */
+        .machine{position:relative;z-index:1;padding:64px 24px;border-top:1px solid var(--border)}
+        .machine-inner{max-width:700px;margin:0 auto}
+        .machine-label{font-size:12px;font-weight:600;color:var(--green);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:12px;text-align:center}
+        .machine-title{font-size:clamp(24px,4vw,32px);font-weight:900;letter-spacing:-1px;text-align:center;margin-bottom:10px}
+        .machine-sub{font-size:16px;color:var(--t2);text-align:center;max-width:540px;margin:0 auto 36px;line-height:1.65}
+        .machine-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        .machine-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px 18px;transition:border-color .3s}
+        .machine-card:hover{border-color:var(--green)}
+        .machine-card-idx{font-family:var(--fc);font-size:11px;font-weight:700;color:var(--green);margin-bottom:8px}
+        .machine-card-title{font-size:15px;font-weight:800;margin-bottom:6px;letter-spacing:-.2px;line-height:1.25}
+        .machine-card-desc{font-size:12px;color:var(--t3);line-height:1.55}
+        .machine-callout{margin-top:28px;text-align:center;padding:20px;border:1px solid var(--border);border-radius:10px;background:var(--green-b)}
+        .machine-callout p{font-size:15px;color:var(--t2);line-height:1.6}
+        .machine-callout strong{color:var(--t1)}
+        .machine-callout .price{font-family:var(--fm);font-size:20px;font-weight:800;color:var(--green);margin-top:8px}
+
         /* Squad — compact list */
         .squad{position:relative;z-index:1;padding:64px 24px;border-top:1px solid var(--border)}
         .squad-inner{max-width:700px;margin:0 auto}
@@ -175,6 +192,7 @@
             .reel-thumb{border-radius:6px}
             .reel-play-icon{width:28px;height:28px}
             .reel-play-icon svg{width:11px;height:11px}
+            .machine-grid{grid-template-columns:1fr}
         }
     </style>
 </head>
@@ -278,6 +296,19 @@
                 <div class="pipe-name">Publish</div>
                 <div class="pipe-desc">Publishes approved reels directly to your Instagram</div>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- Your Dedicated Machine -->
+<section class="machine">
+    <div class="machine-inner">
+        <div class="machine-label">Your Infrastructure</div>
+        <h2 class="machine-title">Your own dedicated AI team.<br>On your own server.</h2>
+        <p class="machine-sub">This isn't shared software. When you sign up, we deploy a dedicated OpenClaw instance on your own DigitalOcean Droplet — a private VPS running 10 agents exclusively for your brand. We set it up, we maintain it. You just talk to the Commander in Telegram. He runs your team.</p>
+        <div class="machine-callout">
+            <p>Freelancer: <strong>$150–$500/video</strong> · Agency: <strong>$3K–$10K/mo</strong></p>
+            <div class="price">Your dedicated DarkOps OpenClaw: $499/mo · ~$16/video</div>
         </div>
     </div>
 </section>
