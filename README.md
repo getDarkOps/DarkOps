@@ -1,4 +1,4 @@
-# AlphaCMO
+# DarkOps.team
 
 **Finds daily trends. Creates viral videos. While you sleep.**
 
