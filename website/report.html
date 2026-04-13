@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlphaCMO — Your Viral Content Analysis</title>
+    <title>DarkOps — Your Viral Content Analysis</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -20,16 +20,25 @@
         .wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:32px 24px 80px}
 
         /* Loading state */
-        .loading{text-align:center;padding:120px 24px}
+        .loading{text-align:center;padding:80px 24px}
         .loading h2{font-size:24px;font-weight:800;margin-bottom:12px}
         .loading p{color:var(--t2);font-size:15px;margin-bottom:32px}
-        .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto}
+        .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 24px}
         @keyframes spin{to{transform:rotate(360deg)}}
-        .load-steps{text-align:left;max-width:360px;margin:24px auto 0}
-        .load-step{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:14px;color:var(--t3);opacity:0;animation:fadeIn .4s ease forwards}
-        .load-step .check{color:var(--green);font-weight:700}
-        .load-step:nth-child(1){animation-delay:.5s}.load-step:nth-child(2){animation-delay:1.5s}.load-step:nth-child(3){animation-delay:2.5s}.load-step:nth-child(4){animation-delay:3.5s}.load-step:nth-child(5){animation-delay:4.5s}
-        @keyframes fadeIn{to{opacity:1}}
+        .load-steps{text-align:left;max-width:360px;margin:0 auto}
+        .load-step{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:14px;color:var(--t3);transition:all .4s}
+        .load-step.active{color:var(--t2)}
+        .load-step.done{color:var(--green)}
+        .load-step .icon{width:20px;text-align:center;font-weight:700}
+        .load-step.done .icon::after{content:'\2713'}
+        .load-step.active .icon::after{content:'';display:inline-block;width:12px;height:12px;border:2px solid var(--green);border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite}
+        .load-step.pending .icon::after{content:'\2022';color:var(--t3)}
+
+        /* Error state */
+        .error-state{text-align:center;padding:80px 24px;display:none}
+        .error-state h2{font-size:22px;font-weight:800;margin-bottom:12px;color:var(--red)}
+        .error-state p{color:var(--t2);font-size:15px;line-height:1.6;margin-bottom:24px}
+        .error-state a{color:var(--green);text-decoration:none;font-weight:600}
 
         /* Report */
         .report{display:none}
@@ -47,37 +56,42 @@
         .score-big.low{color:var(--red)}.score-big.med{color:var(--orange)}.score-big.high{color:var(--green)}
         .score-out-of{font-size:16px;color:var(--t3);margin-top:4px}
         .score-msg{font-size:15px;color:var(--t2);margin-top:16px;line-height:1.6;max-width:480px;margin-left:auto;margin-right:auto}
+        .score-compare{font-size:13px;color:var(--t3);margin-top:12px}
+        .score-compare span{color:var(--green);font-weight:700}
 
         /* Stats grid */
-        .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
-        .stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center}
-        .stat-n{font-size:28px;font-weight:800;font-family:var(--fm)}
-        .stat-l{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+        .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+        .stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+        .stat-n{font-size:24px;font-weight:800;font-family:var(--fm)}
+        .stat-l{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
 
         /* Section */
         .section{margin-bottom:24px}
         .section-h{display:flex;align-items:center;gap:8px;margin-bottom:16px}
         .section-h .icon{font-size:18px}
         .section-h h3{font-size:16px;font-weight:700}
-        .section-h .count{font-size:12px;color:var(--t3);margin-left:auto;font-family:var(--fc)}
 
         /* Trend cards */
-        .trend{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;transition:border-color .2s}
-        .trend:hover{border-color:var(--green)}
+        .trend{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
         .trend-hook{font-size:15px;font-weight:600;line-height:1.5;margin-bottom:8px}
         .trend-meta{display:flex;gap:16px;font-size:12px;color:var(--t3)}
-        .trend-score{color:var(--green);font-weight:700}
-        .trend-views{color:var(--orange)}
+        .trend-views{color:var(--orange);font-weight:600}
 
-        /* Gap analysis */
-        .gap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:10px}
-        .gap-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-        .gap-label{font-size:14px;color:var(--t2)}
-        .gap-values{display:flex;gap:16px;font-size:14px}
-        .gap-you{color:var(--red);font-weight:700}
-        .gap-them{color:var(--green);font-weight:700}
-        .gap-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
-        .gap-fill{height:100%;border-radius:3px;transition:width 1s ease}
+        /* Script cards */
+        .script-tabs{display:flex;gap:8px;margin-bottom:16px}
+        .script-tab{padding:10px 20px;font-family:var(--f);font-size:13px;font-weight:600;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer;color:var(--t3);transition:all .2s}
+        .script-tab.active{background:var(--green-d);border-color:var(--green);color:var(--green)}
+        .script-card{background:var(--bg2);border:1px solid rgba(0,255,136,.2);border-radius:14px;padding:24px;margin-bottom:12px;display:none}
+        .script-card.active{display:block}
+        .script-text{font-size:16px;line-height:1.8;color:var(--t1);white-space:pre-wrap}
+        .script-meta{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+        .script-meta-left{font-size:13px;color:var(--t3);font-family:var(--fc)}
+        .script-actions{display:flex;gap:8px}
+        .script-btn{padding:10px 20px;font-family:var(--f);font-size:13px;font-weight:600;border-radius:8px;cursor:pointer;transition:all .2s;border:none}
+        .script-btn.copy{background:var(--bg3);color:var(--t2);border:1px solid var(--border)}
+        .script-btn.copy:hover{border-color:var(--t3);color:var(--t1)}
+        .script-btn.video{background:var(--green);color:#000;font-weight:700}
+        .script-btn.video:hover{background:#00e67a;box-shadow:0 0 20px var(--green-g)}
 
         /* CTA */
         .report-cta{background:linear-gradient(135deg,rgba(0,255,136,.08),rgba(0,255,136,.02));border:1px solid rgba(0,255,136,.2);border-radius:14px;padding:32px;text-align:center;margin-top:32px}
@@ -91,10 +105,12 @@
         footer p{font-size:12px;color:var(--t3)}footer a{color:var(--t3);text-decoration:none}
 
         @media(max-width:640px){
-            .stats{grid-template-columns:1fr 1fr 1fr}
-            .stat-n{font-size:22px}
+            .stats{grid-template-columns:1fr 1fr}
+            .stat-n{font-size:20px}
             .score-big{font-size:56px}
             .profile{flex-direction:column;text-align:center}
+            .script-tabs{flex-wrap:wrap}
+            .script-meta{flex-direction:column;gap:12px;align-items:flex-start}
         }
     </style>
     <script>
@@ -105,27 +121,34 @@
 <body>
 
 <nav>
-    <a class="logo" href="/">AlphaCMO</a>
-    <a class="back" href="/">← New analysis</a>
+    <a class="logo" href="/">DarkOps</a>
+    <a class="back" href="/">New analysis</a>
 </nav>
 
 <div class="wrap">
 
-    <!-- Loading state (shown first) -->
+    <!-- Loading state -->
     <div class="loading" id="loadingState">
         <div class="spinner"></div>
         <h2 id="loadHandle">Analyzing @handle...</h2>
         <p>Scanning your niche for viral opportunities</p>
         <div class="load-steps">
-            <div class="load-step"><span class="check">✓</span> Scanning public profile</div>
-            <div class="load-step"><span class="check">✓</span> Analyzing posting frequency</div>
-            <div class="load-step"><span class="check">✓</span> Discovering viral trends in your niche</div>
-            <div class="load-step"><span class="check">✓</span> Scoring content opportunities</div>
-            <div class="load-step"><span class="check">✓</span> Generating your report</div>
+            <div class="load-step active" id="step1"><span class="icon"></span> Scanning @<span class="step-handle">handle</span>'s profile</div>
+            <div class="load-step pending" id="step2"><span class="icon"></span> Analyzing your last 12 posts</div>
+            <div class="load-step pending" id="step3"><span class="icon"></span> Discovering trends in your niche</div>
+            <div class="load-step pending" id="step4"><span class="icon"></span> Writing your free viral scripts</div>
+            <div class="load-step pending" id="step5"><span class="icon"></span> Finalizing your report</div>
         </div>
     </div>
 
-    <!-- Report (shown after loading) -->
+    <!-- Error state -->
+    <div class="error-state" id="errorState">
+        <h2>Analysis temporarily unavailable</h2>
+        <p id="errorMsg">We're analyzing a lot of profiles right now. Please try again in 60 seconds.</p>
+        <a href="/" >Try again</a>
+    </div>
+
+    <!-- Report -->
     <div class="report" id="reportState">
 
         <!-- Profile -->
@@ -140,123 +163,232 @@
         <!-- Viral Readiness Score -->
         <div class="score-card">
             <div class="score-label">Viral Readiness Score</div>
-            <div class="score-big low" id="scoreNum">32</div>
+            <div class="score-big low" id="scoreNum">0</div>
             <div class="score-out-of">out of 100</div>
-            <p class="score-msg" id="scoreMsg">You're leaving significant viral potential on the table. Your niche has high-performing content opportunities that you're not capturing.</p>
+            <p class="score-msg" id="scoreMsg"></p>
+            <p class="score-compare">DarkOps clients average <span>72</span> after 30 days</p>
         </div>
 
         <!-- Stats -->
         <div class="stats">
-            <div class="stat"><div class="stat-n" id="statPosts">—</div><div class="stat-l">Posts / Month</div></div>
-            <div class="stat"><div class="stat-n" id="statTrends">—</div><div class="stat-l">Trends Found</div></div>
-            <div class="stat"><div class="stat-n" id="statMissed">—</div><div class="stat-l">Opportunities Missed</div></div>
+            <div class="stat"><div class="stat-n" id="statFollowers">-</div><div class="stat-l">Followers</div></div>
+            <div class="stat"><div class="stat-n" id="statEngagement">-</div><div class="stat-l">Engagement</div></div>
+            <div class="stat"><div class="stat-n" id="statPosts">-</div><div class="stat-l">Posts / Mo</div></div>
+            <div class="stat"><div class="stat-n" id="statReels">-</div><div class="stat-l">Reels %</div></div>
         </div>
 
-        <!-- Content Gap -->
-        <div class="section">
-            <div class="section-h"><span class="icon">📊</span><h3>Your Content Gap</h3></div>
-            <div class="gap">
-                <div class="gap-row">
-                    <span class="gap-label">Reels per month</span>
-                    <div class="gap-values"><span class="gap-you" id="gapYou">~4</span><span style="color:var(--t3)">vs</span><span class="gap-them" id="gapThem">~28</span></div>
-                </div>
-                <div class="gap-bar"><div class="gap-fill" id="gapFill" style="width:14%;background:var(--red)"></div></div>
-                <p style="font-size:12px;color:var(--t3);margin-top:8px"><span style="color:var(--red)">You</span> vs <span style="color:var(--green)">Top performers in your niche</span></p>
-            </div>
+        <!-- Trending Hooks -->
+        <div class="section" id="trendingSection" style="display:none">
+            <div class="section-h"><span class="icon">&#128293;</span><h3>Trending In Your Niche Right Now</h3></div>
+            <div id="trendingList"></div>
         </div>
 
-        <!-- Viral Trends You're Missing -->
+        <!-- Your Free Viral Scripts -->
         <div class="section">
-            <div class="section-h"><span class="icon">🔥</span><h3>Viral Trends You're Missing</h3><span class="count">Found tonight</span></div>
+            <div class="section-h"><span class="icon">&#9889;</span><h3>Your Free Viral Scripts</h3></div>
+            <p style="font-size:14px;color:var(--t2);margin-bottom:16px;line-height:1.6">Written for YOUR brand based on what's trending in your niche right now. Pick your favorite.</p>
 
-            <div class="trend">
-                <div class="trend-hook">"Stop running ads until you fix this one thing about your funnel..."</div>
-                <div class="trend-meta"><span class="trend-score">Score: 91</span><span class="trend-views">42K views</span><span>#marketing</span></div>
-            </div>
-            <div class="trend">
-                <div class="trend-hook">"The agency model is dead. Here's what's replacing it and why you should care..."</div>
-                <div class="trend-meta"><span class="trend-score">Score: 84</span><span class="trend-views">28K views</span><span>#agencylife</span></div>
-            </div>
-            <div class="trend">
-                <div class="trend-hook">"I made $14K in 30 days with this exact content strategy. Here's the breakdown..."</div>
-                <div class="trend-meta"><span class="trend-score">Score: 78</span><span class="trend-views">19K views</span><span>#digitalmarketing</span></div>
-            </div>
-            <div class="trend">
-                <div class="trend-hook">"Your clients don't need more leads. They need this one fix first..."</div>
-                <div class="trend-meta"><span class="trend-score">Score: 72</span><span class="trend-views">15K views</span><span>#saas</span></div>
-            </div>
-            <div class="trend">
-                <div class="trend-hook">"We replaced our entire content team with one tool. Output went up 400%..."</div>
-                <div class="trend-meta"><span class="trend-score">Score: 68</span><span class="trend-views">11K views</span><span>#contentcreator</span></div>
-            </div>
-        </div>
-
-        <!-- What AlphaCMO Would Do -->
-        <div class="section">
-            <div class="section-h"><span class="icon">⚡</span><h3>What AlphaCMO Would Do For You</h3></div>
-            <div class="gap" style="border-color:rgba(0,255,136,.2)">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-                    <div><div style="font-size:28px;font-weight:800;color:var(--green);font-family:var(--fm)">30+</div><div style="font-size:12px;color:var(--t3)">Videos per month</div></div>
-                    <div><div style="font-size:28px;font-weight:800;color:var(--green);font-family:var(--fm)">2AM</div><div style="font-size:12px;color:var(--t3)">Nightly trend scans</div></div>
-                    <div><div style="font-size:28px;font-weight:800;color:var(--green);font-family:var(--fm)">$16</div><div style="font-size:12px;color:var(--t3)">Per finished video</div></div>
-                    <div><div style="font-size:28px;font-weight:800;color:var(--green);font-family:var(--fm)">5m</div><div style="font-size:12px;color:var(--t3)">Your time per day</div></div>
-                </div>
-            </div>
+            <div class="script-tabs" id="scriptTabs"></div>
+            <div id="scriptCards"></div>
         </div>
 
         <!-- CTA -->
         <div class="report-cta">
-            <h3>Ready to stop missing viral trends?</h3>
-            <p>AlphaCMO would have caught all 5 of these trends overnight, created branded avatar videos, and had them ready for your approval by morning.</p>
-            <a class="cta" href="/start">Get AlphaCMO →</a>
-            <p class="price">Founding member: $499/month · ~$16/video · Cancel anytime</p>
+            <h3>These scripts took DarkOps 8 seconds to write.</h3>
+            <p>Imagine 30 of these per month &mdash; scripted, filmed with your AI avatar, edited with captions and branding, and posted to Instagram. While you sleep.</p>
+            <a class="cta" href="/start">Start DarkOps &rarr;</a>
+            <p class="price">$499/month &middot; ~$16/video &middot; Cancel anytime</p>
         </div>
 
     </div>
 </div>
 
-<footer><p><a href="/">AlphaCMO</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · © 2026 New Empire AI</p></footer>
+<footer><p><a href="/">DarkOps</a> &middot; <a href="/terms">Terms</a> &middot; <a href="/privacy">Privacy</a> &middot; &copy; 2026 New Empire AI</p></footer>
 
 <script>
-// Get handle from URL
+const API_URL = 'https://provision.alphacmo.ai/api/analyze';
+
+// Get params from URL
 const params = new URLSearchParams(window.location.search);
-const handle = params.get('handle') || 'unknown';
+const handle = (params.get('handle') || '').replace(/^@/, '');
 const name = params.get('name') || '';
+const email = params.get('email') || '';
+
+if (!handle) {
+    window.location.href = '/';
+}
 
 // Set loading text
 document.getElementById('loadHandle').textContent = 'Analyzing @' + handle + '...';
+document.querySelectorAll('.step-handle').forEach(el => el.textContent = handle);
 
-// Simulate loading, then show report
-setTimeout(() => {
+// Animate loading steps while API call runs
+const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
+let currentStep = 0;
+
+function advanceStep() {
+    if (currentStep > 0) {
+        document.getElementById(steps[currentStep - 1]).className = 'load-step done';
+    }
+    if (currentStep < steps.length) {
+        document.getElementById(steps[currentStep]).className = 'load-step active';
+        currentStep++;
+    }
+}
+
+// Advance steps on a timer (the API takes 20-45 seconds)
+advanceStep(); // step 1 starts immediately
+const stepTimer = setInterval(() => {
+    advanceStep();
+    if (currentStep >= steps.length) clearInterval(stepTimer);
+}, 6000);
+
+// Call the real API
+fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ handle, name, email })
+})
+.then(r => {
+    if (!r.ok) throw new Error('API returned ' + r.status);
+    return r.json();
+})
+.then(data => {
+    if (data.error) throw new Error(data.detail || data.error);
+
+    // Finish all loading steps
+    clearInterval(stepTimer);
+    steps.forEach(s => document.getElementById(s).className = 'load-step done');
+
+    // Brief pause so user sees all checkmarks, then show report
+    setTimeout(() => renderReport(data), 800);
+})
+.catch(err => {
+    console.error('Analysis failed:', err);
+    clearInterval(stepTimer);
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('errorState').style.display = 'block';
+    document.getElementById('errorMsg').textContent =
+        'We hit a snag analyzing @' + handle + '. This usually resolves in 60 seconds. Please try again.';
+});
+
+function renderReport(data) {
     document.getElementById('loadingState').style.display = 'none';
     document.getElementById('reportState').style.display = 'block';
 
-    // Populate profile
-    document.getElementById('profileHandle').textContent = '@' + handle;
-    document.getElementById('profileInitial').textContent = handle.charAt(0).toUpperCase();
-    document.getElementById('profileBio').textContent = name ? name + ' · Instagram Profile' : 'Instagram Profile';
+    const p = data.profile || {};
+    const t = data.trending || {};
+    const scripts = data.scripts || [];
+    const score = data.score || 0;
 
-    // Randomize some numbers for demo (replace with real Apify data later)
-    const posts = Math.floor(Math.random() * 6) + 2;
-    const trends = Math.floor(Math.random() * 8) + 8;
-    const missed = trends - Math.floor(Math.random() * 3);
-    const score = Math.floor(Math.random() * 25) + 20;
+    // Profile
+    document.getElementById('profileHandle').textContent = '@' + (p.handle || handle);
+    document.getElementById('profileInitial').textContent = (p.handle || handle).charAt(0).toUpperCase();
+    const bioText = p.bio ? p.bio.substring(0, 100) : '';
+    document.getElementById('profileBio').textContent = name ? name + (bioText ? ' \u00b7 ' + bioText : '') : bioText || 'Instagram Profile';
 
-    document.getElementById('statPosts').textContent = posts;
-    document.getElementById('statTrends').textContent = trends;
-    document.getElementById('statMissed').textContent = missed;
+    // Score
+    const scoreEl = document.getElementById('scoreNum');
+    scoreEl.textContent = score;
+    scoreEl.className = 'score-big ' + (score < 40 ? 'low' : score < 65 ? 'med' : 'high');
 
-    document.getElementById('scoreNum').textContent = score;
-    const pct = Math.round((posts / 28) * 100);
-    document.getElementById('gapYou').textContent = '~' + posts;
-    document.getElementById('gapFill').style.width = pct + '%';
+    // Score message based on score range
+    const msgEl = document.getElementById('scoreMsg');
+    if (score < 30) {
+        msgEl.textContent = "You're leaving massive viral potential on the table. Your niche is full of opportunities you're not capturing.";
+    } else if (score < 50) {
+        msgEl.textContent = "You're posting, but not at the frequency or format that drives viral reach. Your niche has high-performing content you could be adapting.";
+    } else if (score < 70) {
+        msgEl.textContent = "Solid foundation. You're active, but there's room to accelerate with more reels and trend-driven content.";
+    } else {
+        msgEl.textContent = "Strong profile. You're already doing many things right. DarkOps would amplify what's working and fill in the gaps.";
+    }
 
-    // Animate gap bar
-    setTimeout(() => {
-        document.getElementById('gapFill').style.width = pct + '%';
-    }, 100);
+    // Stats
+    document.getElementById('statFollowers').textContent = formatNumber(p.followers || 0);
+    document.getElementById('statEngagement').textContent = (p.engagement_rate || 0).toFixed(1) + '%';
+    document.getElementById('statPosts').textContent = p.posts_per_month || '0';
+    document.getElementById('statReels').textContent = (p.reels_ratio || 0) + '%';
 
-}, 5500);
+    // Trending hooks
+    const hooks = t.top_hooks || [];
+    const realHooks = hooks.filter(h => h.views > 0 || (h.text && h.text.length > 20 && !h.text.startsWith('#')));
+    if (realHooks.length > 0) {
+        document.getElementById('trendingSection').style.display = 'block';
+        const listEl = document.getElementById('trendingList');
+        realHooks.forEach(h => {
+            const div = document.createElement('div');
+            div.className = 'trend';
+            const viewsStr = h.views > 0 ? formatNumber(h.views) + ' views' : '';
+            div.innerHTML = '<div class="trend-hook">"' + escapeHtml(h.text) + '"</div>'
+                + (viewsStr ? '<div class="trend-meta"><span class="trend-views">' + viewsStr + '</span></div>' : '');
+            listEl.appendChild(div);
+        });
+    }
+
+    // Scripts
+    const tabNames = { challenge: 'Direct Challenge', question: 'Question Hook', story: 'Story Hook' };
+    const tabsEl = document.getElementById('scriptTabs');
+    const cardsEl = document.getElementById('scriptCards');
+
+    scripts.forEach((s, i) => {
+        // Tab
+        const tab = document.createElement('button');
+        tab.className = 'script-tab' + (i === 0 ? ' active' : '');
+        tab.textContent = tabNames[s.angle] || ('Script ' + (i + 1));
+        tab.onclick = () => switchScript(i);
+        tabsEl.appendChild(tab);
+
+        // Card
+        const card = document.createElement('div');
+        card.className = 'script-card' + (i === 0 ? ' active' : '');
+        card.id = 'script-' + i;
+
+        const words = (s.script || '').split(/\s+/).length;
+        const seconds = Math.round(words / 2.5);
+
+        card.innerHTML =
+            '<div class="script-text">' + escapeHtml(s.script || '') + '</div>' +
+            '<div class="script-meta">' +
+                '<div class="script-meta-left">' + words + ' words &middot; ~' + seconds + ' seconds &middot; optimized for Reels</div>' +
+                '<div class="script-actions">' +
+                    '<button class="script-btn copy" onclick="copyScript(' + i + ')">Copy Script</button>' +
+                    '<a class="script-btn video" href="/start">Get This As A Video &rarr;</a>' +
+                '</div>' +
+            '</div>';
+        cardsEl.appendChild(card);
+    });
+
+    // If no scripts returned (shouldn't happen, but safety)
+    if (scripts.length === 0) {
+        cardsEl.innerHTML = '<p style="color:var(--t3);padding:20px">Script generation is temporarily unavailable. Please try again.</p>';
+    }
+}
+
+function switchScript(index) {
+    document.querySelectorAll('.script-tab').forEach((t, i) => t.className = 'script-tab' + (i === index ? ' active' : ''));
+    document.querySelectorAll('.script-card').forEach((c, i) => c.className = 'script-card' + (i === index ? ' active' : ''));
+}
+
+function copyScript(index) {
+    const card = document.getElementById('script-' + index);
+    const text = card.querySelector('.script-text').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = card.querySelector('.copy');
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy Script', 2000);
+    });
+}
+
+function formatNumber(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return String(n);
+}
+
+function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 </script>
 </body>
 </html>
