@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://alphacmo.ai/</loc>
+    <loc>https://darkops.team/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://alphacmo.ai/live</loc>
+    <loc>https://darkops.team/live</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://alphacmo.ai/pricing</loc>
+    <loc>https://darkops.team/pricing</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://alphacmo.ai/start</loc>
+    <loc>https://darkops.team/start</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://alphacmo.ai/about</loc>
+    <loc>https://darkops.team/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://alphacmo.ai/sign-in</loc>
+    <loc>https://darkops.team/sign-in</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://alphacmo.ai/terms</loc>
+    <loc>https://darkops.team/terms</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://alphacmo.ai/privacy</loc>
+    <loc>https://darkops.team/privacy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
