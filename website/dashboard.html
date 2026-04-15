@@ -316,4 +316,11 @@ async function init() {
 
     setInterval(async () => {
         const ev = await sbGet('events', 'customer_id=eq.' + CID + '&order=created_at.asc&limit=100');
-        sh
+        showEvents(ev);
+    }, polling ? 3000 : 30000);
+}
+
+init();
+</script>
+</body>
+</html>
