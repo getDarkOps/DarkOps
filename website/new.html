@@ -150,6 +150,26 @@
             opacity: 1;
         }
 
+        /* ---- Header ---- */
+        .site-header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 12px 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .site-header a {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .site-header a:hover { color: var(--text-primary); }
+
         /* ---- Staggered entrance ---- */
         .fade-in {
             opacity: 0;
@@ -179,9 +199,6 @@
         }
 
         .hero-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
             margin-bottom: 20px;
         }
 
@@ -205,16 +222,6 @@
         .logo:hover {
             filter: brightness(1.2);
         }
-
-        .signin-link {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-tertiary);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .signin-link:hover { color: var(--text-primary); }
 
         /* ---- Tagline ---- */
         .tagline {
@@ -554,6 +561,7 @@
         /* ---- Responsive ---- */
         @media (max-width: 520px) {
             .container { padding: 0 16px; }
+            .site-header { padding: 10px 16px; }
             .terminal-bar { padding: 8px 16px; font-size: 10px; }
             .hero { padding: 20px 0 16px; }
             .hero-header { margin-bottom: 14px; }
@@ -591,13 +599,16 @@
         <div class="ln on">Rewriting script for @nextgen brand voice...</div>
     </div>
 
+    <div class="site-header">
+        <a href="/login">Sign in</a>
+    </div>
+
     <div class="container">
 
         <section class="hero">
 
             <div class="hero-header fade-in d2">
                 <a class="logo" href="/">DarkOps</a>
-                <a class="signin-link" href="/login">Sign in</a>
             </div>
 
             <p class="tagline fade-in d3">3 scripts designed to go viral in your niche. <em>Free.</em></p>
@@ -632,7 +643,7 @@
             </div>
 
             <!-- Social proof -->
-            <p class="social-proof fade-in d5">2,400+ scripts generated &middot; 150+ niches analyzed</p>
+            <p class="social-proof fade-in d5"><span id="scriptCount">300</span>+ scripts generated &middot; 150+ niches analyzed</p>
 
         </section>
 
@@ -722,6 +733,39 @@
             termEl.appendChild(el);
             lineIdx++;
         }, 3200);
+
+        /* ---- Live script counter ---- */
+        (function() {
+            var el = document.getElementById('scriptCount');
+            if (!el) return;
+
+            // Epoch: April 15, 2026 00:00 UTC
+            var epoch = new Date('2026-04-15T00:00:00Z').getTime();
+            var base = 300;
+            var baseRate = 144;       // scripts/day (1 per 10 min)
+            var dailyGrowth = 0.008;  // 0.8% daily compound on the rate
+            var lnGrowth = Math.log(1 + dailyGrowth);
+
+            function getCount() {
+                var now = Date.now();
+                var days = Math.max(0, (now - epoch) / 86400000);
+                // Integral of baseRate * (1+g)^t from 0 to days
+                var accumulated = baseRate * (Math.pow(1 + dailyGrowth, days) - 1) / lnGrowth;
+                return Math.floor(base + accumulated);
+            }
+
+            function fmt(n) { return n.toLocaleString('en-US'); }
+
+            el.textContent = fmt(getCount());
+
+            // Update every 8-12s (randomized for organic feel)
+            (function tick() {
+                setTimeout(function() {
+                    el.textContent = fmt(getCount());
+                    tick();
+                }, 8000 + Math.random() * 4000);
+            })();
+        })();
 
         /* ---- Handle input ---- */
         var handleInput = document.getElementById('handleInput');
