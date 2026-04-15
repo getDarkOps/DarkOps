@@ -85,14 +85,30 @@
   });
 
   // ── Message rendering ──
+  function sanitizeHtml(html) {
+    // Allow only safe tags: a, strong, em, br. Strip everything else.
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    tmp.querySelectorAll('script,iframe,object,embed,form,input,style').forEach(function(el) { el.remove(); });
+    // Ensure all links open in new tab
+    tmp.querySelectorAll('a').forEach(function(a) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener');
+      a.style.color = '#00ff88';
+      a.style.textDecoration = 'underline';
+    });
+    return tmp.innerHTML;
+  }
+
   function appendMsg(role, text) {
     var div = document.createElement('div');
     if (role === 'user') {
       div.style.cssText = 'background:#00ff88;color:#000;padding:12px 16px;border-radius:14px;font-size:14px;line-height:1.6;max-width:80%;align-self:flex-end;word-wrap:break-word;font-weight:500;';
+      div.textContent = text; // User messages: plain text (safe)
     } else {
       div.style.cssText = 'background:#111;border:1px solid #1a1a1a;color:#bbb;padding:14px 18px;border-radius:14px;font-size:14px;line-height:1.6;max-width:85%;word-wrap:break-word;';
+      div.innerHTML = sanitizeHtml(text); // Agent messages: render HTML links
     }
-    div.textContent = text;
     msgs.appendChild(div);
     msgs.scrollTop = msgs.scrollHeight;
   }
