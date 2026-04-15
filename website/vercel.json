@@ -26,6 +26,7 @@
     { "source": "/dashboard", "destination": "/dashboard.html" },
     { "source": "/onboarding", "destination": "/onboarding.html" },
     { "source": "/live/:path*", "destination": "/dashboard.html" }
+    { "source": "/(.*)", "destination": "/" }
   ],
   "headers": [
     {
