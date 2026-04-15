@@ -34,7 +34,7 @@
     '  </div>',
     '  <div style="padding:12px;border-top:1px solid #1a1a1a;display:flex;gap:8px;background:#0a0a0a;">',
     '    <input id="do-chat-input" type="text" placeholder="Type a message..."',
-    '      style="flex:1;background:#0a0a0a;border:1px solid #00ff88;border-radius:10px;padding:12px 16px;color:#fff;font-size:14px;outline:none;font-family:Inter,-apple-system,sans-serif;" />',
+    '      style="flex:1;background:#0a0a0a;border:1px solid #00ff88;border-radius:10px;padding:12px 16px;color:#fff;font-size:16px;outline:none;font-family:Inter,-apple-system,sans-serif;" />',
     '    <button id="do-chat-send" style="width:46px;height:46px;border-radius:10px;background:#00ff88;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">',
     '      <svg width="18" height="18" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>',
     '    </button>',
