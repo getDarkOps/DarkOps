@@ -6,6 +6,7 @@
     { "source": "/login", "destination": "/login.html" },
     { "source": "/about", "destination": "/about.html" },
     { "source": "/pricing", "destination": "/pricing.html" },
+    { "source": "/special-ops-calendar", "destination": "/special-ops-calendar.html" },
     { "source": "/vsl", "destination": "/vsl.html" },
     { "source": "/vsl-sales-page", "destination": "/vsl-sales-page.html" },
     { "source": "/launch", "destination": "/launch.html" },
