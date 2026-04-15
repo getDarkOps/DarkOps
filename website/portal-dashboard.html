@@ -198,77 +198,45 @@ const SB_URL = 'https://rkudnkbpnfxpxglaklqs.supabase.co';
 const SB_KEY = 'sb_publishable_Ll3KUfVgGqeCMUTSlAd4bA_YoD-SHkA';
 // ============================================================
 
-// Auth gate: check session before loading dashboard
+// Auth gate: check session, resolve CID, THEN call init()
 let CID = null;
 
 (async function authGate() {
-    // Load Supabase client for auth
     const { createClient } = window.supabase || {};
-    if (!createClient) {
-        // supabase-js not loaded yet (added via script tag below portal code)
-        // Fall back to URL-based CID
-        const path = window.location.pathname.replace(/\/+$/, '').split('/');
-        CID = path[path.length - 1];
-        if (!CID || CID === 'dashboard' || CID === 'portal') {
-            document.getElementById('loadingState').style.display = 'none';
-            document.getElementById('errorState').style.display = 'block';
-        }
-        return;
-    }
 
-    const sb = createClient(SB_URL, SB_KEY);
-    const { data: { session } } = await sb.auth.getSession();
+    if (createClient) {
+        const sb = createClient(SB_URL, SB_KEY);
+        const { data: { session } } = await sb.auth.getSession();
 
-    if (!session) {
-        window.location.href = '/sign-in';
-        return;
-    }
-
-    // Get customer_id from user metadata (set during invite)
-    CID = session.user.user_metadata?.customer_id;
-
-    if (!CID) {
-        // Fallback: look up by email
-        try {
-            const r = await fetch(SB_URL + '/rest/v1/customers?email=eq.' + encodeURIComponent(session.user.email) + '&limit=1', {
-                headers: { apikey: SB_KEY }
-            });
-            const customers = await r.json();
-            if (customers.length) CID = customers[0].id;
-        } catch(e) { console.error('Customer lookup failed:', e); }
-    }
-
-    if (!CID) {
-        document.getElementById('loadingState').style.display = 'none';
-        document.getElementById('errorState').style.display = 'block';
-        return;
-    }
-
-    // Add sign-out button to nav
-    const nav = document.querySelector('nav, .header');
-    if (nav) {
-        const signOut = document.createElement('a');
-        signOut.href = '#';
-        signOut.textContent = 'Sign Out';
-        signOut.style.cssText = 'font-size:13px;color:#888;text-decoration:none;cursor:pointer;';
-        signOut.onclick = async (e) => {
-            e.preventDefault();
-            await sb.auth.signOut();
+        if (!session) {
             window.location.href = '/sign-in';
-        };
-        nav.appendChild(signOut);
-    }
-})();
+            return;
+        }
 
-// Fallback for non-auth dashboard (URL-based, still works during transition)
-if (!CID) {
-    const path = window.location.pathname.replace(/\/+$/, '').split('/');
-    CID = path[path.length - 1];
-    if (!CID || CID === 'dashboard' || CID === 'portal') {
+        // Get customer_id from user metadata (set during invite)
+        CID = session.user.user_metadata?.customer_id;
+
+        if (!CID) {
+            // Fallback: look up by email
+            try {
+                const r = await fetch(SB_URL + '/rest/v1/customers?email=eq.' + encodeURIComponent(session.user.email) + '&limit=1', {
+                    headers: { apikey: SB_KEY }
+                });
+                const customers = await r.json();
+                if (customers.length) CID = customers[0].id;
+            } catch(e) { console.error('Customer lookup failed:', e); }
+        }
+    }
+
+    if (!CID) {
         document.getElementById('loadingState').style.display = 'none';
         document.getElementById('errorState').style.display = 'block';
+        return;
     }
-}
+
+    // CID is resolved — now start the dashboard
+    init();
+})();
 
 const EV = {
     'customer.provision_started': ['🚀','Setting up your DarkOps engine...','Your personal AI agent is being built. Takes about 90 seconds.','active'],
